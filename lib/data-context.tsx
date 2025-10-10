@@ -118,7 +118,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const syncPropertyToTask = useCallback(
     (propertyId: string) => {
       const property = properties.find((p) => p.id === propertyId)
-      if (!property || property.status !== "契約済み") {
+      if (!property || property.status !== "契約後") {
         return
       }
 
@@ -168,8 +168,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
           const updated = [...prev]
           updated[index] = { ...property, updatedAt: new Date() }
 
-          // ステータスが契約済みに変更された場合、タスクを自動生成
-          if (property.status === "契約済み" && prev[index].status !== "契約済み") {
+          // ステータスが契約後に変更された場合、タスクを自動生成
+          if (property.status === "契約後" && prev[index].status !== "契約後") {
             setTimeout(() => syncPropertyToTask(property.id), 0)
           }
 
@@ -186,7 +186,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const newProperty = { ...property, createdAt: new Date(), updatedAt: new Date() }
       setProperties((prev) => [...prev, newProperty])
 
-      if (property.status === "契約済み") {
+      if (property.status === "契約後") {
         setTimeout(() => syncPropertyToTask(property.id), 0)
       }
     },

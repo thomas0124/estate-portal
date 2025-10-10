@@ -41,7 +41,7 @@ export function isValidPropertyType(type: string): type is PropertyType {
 
 // 物件ステータスの検証
 export function isValidPropertyStatus(status: string): status is PropertyStatus {
-  return ["仲介物件", "業者物件", "所有物件", "契約済み", "販売中止"].includes(status)
+  return ["仲介物件", "業者物件", "所有物件", "契約後", "販売中止"].includes(status)
 }
 
 // タスクステータスの検証
@@ -85,13 +85,13 @@ export function validateProperty(property: Partial<Property>): { valid: boolean;
     errors.push("アットホーム番号は50文字以内で入力してください")
   }
 
-  // 契約済みの場合は契約日と決済日が必須
-  if (property.status === "契約済み") {
+  // 契約後の場合は契約日と決済日が必須
+  if (property.status === "契約後") {
     if (!property.contractDate) {
-      errors.push("契約済みの場合、契約日は必須です")
+      errors.push("契約後の場合、契約日は必須です")
     }
     if (!property.settlementDate) {
-      errors.push("契約済みの場合、決済日は必須です")
+      errors.push("契約後の場合、決済日は必須です")
     }
   }
 

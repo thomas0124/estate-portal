@@ -20,7 +20,7 @@ interface PropertyEditDialogProps {
 }
 
 const PROPERTY_TYPES: PropertyType[] = ["一戸建て", "マンション", "土地", "その他"]
-const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "契約済み", "販売中止"]
+const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "契約後", "販売中止"]
 const PROPERTY_CHARACTERISTICS: PropertyCharacteristic[] = ["相続", "通常", "離婚", "破産"]
 
 export function PropertyEditDialog({ property, open, onOpenChange, onSave }: PropertyEditDialogProps) {
@@ -55,10 +55,10 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
       return
     }
 
-    if (formData.status === "契約済み") {
+    if (formData.status === "契約後") {
       if (!formData.contractDate || !formData.settlementDate) {
         toast.error("入力エラー", {
-          description: "契約済みの場合、契約日と決済日を入力してください",
+          description: "契約後の場合、契約日と決済日を入力してください",
         })
         return
       }
@@ -218,7 +218,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             />
           </div>
 
-          {formData.status === "契約済み" && (
+          {formData.status === "契約後" && (
             <div className="grid grid-cols-2 gap-4 pt-2 border-t">
               <div className="space-y-2">
                 <Label htmlFor="contractDate">契約日</Label>
