@@ -1,0 +1,202 @@
+"use client"
+
+import { useState, useMemo, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/lib/auth-context"
+import { useData } from "@/lib/data-context"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
+import { PropertyList } from "@/components/property-list"
+import { PropertyEditDialog } from "@/components/property-edit-dialog"
+import { PropertyFilters } from "@/components/property-filters"
+import { getUniqueHandlers } from "@/lib/mock-data"
+import type { Property, PropertyType, PropertyStatus, SortOrder } from "@/lib/types"
+import { Plus, Search, ArrowUpDown, LogOut, ClipboardList, Settings, Menu } from "lucide-react"
+
+export default function PropertiesPage() {
+  const router = useRouter()
+  const { user, logout, isLoading, isAdmin } = useAuth()
+  const { properties, addProperty } = useData()
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const [selectedTypes, setSelectedTypes] = useState<PropertyType[]>([])
+  const [selectedStatuses, setSelectedStatuses] = useState<PropertyStatus[]>([])
+  const [selectedHandlers, setSelectedHandlers] = useState<string[]>([])
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc")
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push("/login")
+    }
+  }, [user, isLoading, router])
+
+  const availableHandlers = useMemo(() => getUniqueHandlers(properties), [properties])
+
+  const filteredCount = useMemo(() => {
+    let filtered = properties
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered.filter(
+        (p) =>
+          p.propertyName.toLowerCase().includes(query) ||
+          p.companyName.toLowerCase().includes(query) ||
+          p.propertyNumber.toString().includes(query),
+      )
+    }
+
+    if (selectedTypes.length > 0) {
+      filtered = filtered.filter((p) => selectedTypes.includes(p.propertyType))
+    }
+
+    if (selectedStatuses.length > 0) {
+      filtered = filtered.filter((p) => selectedStatuses.includes(p.status))
+    } else {
+      filtered = filtered.filter((p) => p.status !== "販売中止")
+    }
+
+    if (selectedHandlers.length > 0) {
+      filtered = filtered.filter((p) => selectedHandlers.includes(p.handlerName))
+    }
+
+    return filtered.length
+  }, [properties, searchQuery, selectedTypes, selectedStatuses, selectedHandlers])
+
+  const handleNew = () => {
+    setSelectedProperty(null)
+    setIsDialogOpen(true)
+  }
+
+  const resetFilters = () => {
+    setSelectedTypes([])
+    setSelectedStatuses([])
+    setSelectedHandlers([])
+    setSearchQuery("")
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto" />
+          <p className="mt-4 text-muted-foreground">読み込み中...</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex min-h-screen bg-muted/30">
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:block w-64 bg-card border-r p-6 overflow-y-auto">
+        <div className="mb-6">
+          <h2 className="text-lg font-bold mb-1">物件管理</h2>
+          <p className="text-xs text-muted-foreground">{user?.name}</p>
+        </div>
+        <PropertyFilters
+          selectedTypes={selectedTypes}
+          selectedStatuses={selectedStatuses}
+          selectedHandlers={selectedHandlers}
+          availableHandlers={availableHandlers}
+          onTypeChange={setSelectedTypes}
+          onStatusChange={setSelectedStatuses}
+          onHandlerChange={setSelectedHandlers}
+          onReset={resetFilters}
+        />
+      </aside>
+
+      <main className="flex-1 overflow-y-auto">
+        <div className="container max-w-7xl mx-auto p-3 sm:p-4 md:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold">契約前物件</h1>
+              <p className="text-sm text-muted-foreground mt-1">{filteredCount}件の物件</p>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              {isAdmin && (
+                <Button variant="outline" size="sm" onClick={() => router.push("/admin")} className="hidden sm:flex">
+                  <Settings className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">管理者設定</span>
+                </Button>
+              )}
+              <Button variant="outline" size="sm" onClick={() => router.push("/tasks")}>
+                <ClipboardList className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">契約後タスク</span>
+              </Button>
+              <Button variant="outline" size="sm" onClick={logout}>
+                <LogOut className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">ログアウト</span>
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 mb-4 sm:mb-6">
+            {/* Mobile Filter Button */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="sm" className="lg:hidden shrink-0 bg-transparent">
+                  <Menu className="h-4 w-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64 p-6 overflow-y-auto">
+                <SheetTitle className="text-lg font-bold mb-1">物件管理</SheetTitle>
+                <p className="text-xs text-muted-foreground mb-6">{user?.name}</p>
+                <PropertyFilters
+                  selectedTypes={selectedTypes}
+                  selectedStatuses={selectedStatuses}
+                  selectedHandlers={selectedHandlers}
+                  availableHandlers={availableHandlers}
+                  onTypeChange={setSelectedTypes}
+                  onStatusChange={setSelectedStatuses}
+                  onHandlerChange={setSelectedHandlers}
+                  onReset={resetFilters}
+                />
+              </SheetContent>
+            </Sheet>
+
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="物件名、社名、物件番号で検索..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSortOrder(sortOrder === "desc" ? "asc" : "desc")}
+              className="shrink-0"
+            >
+              <ArrowUpDown className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">物件番号 {sortOrder === "desc" ? "降順" : "昇順"}</span>
+            </Button>
+            <Button onClick={handleNew} size="sm" className="shrink-0">
+              <Plus className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">新規登録</span>
+            </Button>
+          </div>
+
+          <PropertyList
+            searchQuery={searchQuery}
+            selectedTypes={selectedTypes}
+            selectedStatuses={selectedStatuses}
+            selectedHandlers={selectedHandlers}
+            sortOrder={sortOrder}
+          />
+        </div>
+      </main>
+
+      <PropertyEditDialog
+        property={selectedProperty}
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onSave={addProperty}
+      />
+    </div>
+  )
+}
