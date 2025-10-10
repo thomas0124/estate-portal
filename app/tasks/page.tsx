@@ -83,6 +83,25 @@ export default function TasksPage() {
     return { count, totalSales }
   }, [filteredTasks])
 
+  const settlementMonthStats = useMemo(() => {
+    const stats: Record<string, { count: number; monthlySales: number }> = {}
+    periods.forEach((period) => {
+      stats[period.label] = { count: 0, monthlySales: 0 }
+    })
+
+    tasks.forEach((task) => {
+      const settlementDate = new Date(task.settlementDate)
+      const monthLabel = `${settlementDate.getFullYear()}.${(settlementDate.getMonth() + 1).toString().padStart(2, "0")}`
+
+      if (stats[monthLabel]) {
+        stats[monthLabel].count++
+        const [sell = 0, buy = 0] = task.estimatedSales.split("/").map(Number)
+        stats[monthLabel].monthlySales += sell + buy
+      }
+    })
+    return stats
+  }, [tasks, periods])
+
   const handlerStats = useMemo(() => {
     const stats: Record<string, { count: number; totalSales: number }> = {}
 
@@ -143,11 +162,11 @@ export default function TasksPage() {
             return (
               <Button
                 key={handler.id}
-                variant={isSelected ? "default" : "outline"}
+                variant={"outline"}
                 size="sm"
                 onClick={() => toggleHandler(handler.name)}
-                className={`text-xs ${isSelected ? "" : "hover:brightness-95"}`}
-                style={!isSelected ? { backgroundColor: handler.color, color: "#000" } : undefined}
+                className={`text-xs transition-all duration-200 ${isSelected ? "ring-2 ring-offset-2 ring-ring" : "hover:brightness-95"}`}
+                style={{ backgroundColor: handler.color, color: "#000" }}
               >
                 {handler.name}{" "}
                 <span className="ml-1 font-normal">
@@ -168,17 +187,23 @@ export default function TasksPage() {
               <ChevronUp className="h-4 w-4" />
             </Button>
             <div className="flex flex-wrap gap-1 flex-1">
-              {periods.slice(0, 6).map((period, index) => (
-                <Button
-                  key={`past-${index}`}
-                  variant={selectedPeriodIndex === index ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedPeriodIndex(index)}
-                  className="text-xs whitespace-nowrap"
-                >
-                  {period.label}
-                </Button>
-              ))}
+              {periods.slice(0, 6).map((period, index) => {
+                const stats = settlementMonthStats[period.label] || { count: 0, monthlySales: 0 }
+                return (
+                  <Button
+                    key={`past-${index}`}
+                    variant={selectedPeriodIndex === index ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedPeriodIndex(index)}
+                    className="text-xs whitespace-nowrap"
+                  >
+                    {period.label}
+                    <span className="ml-1 font-normal">
+                      ({stats.count}件/{stats.monthlySales.toLocaleString()}/{stats.monthlySales.toLocaleString()})
+                    </span>
+                  </Button>
+                )
+              })}
               <Button
                 variant={selectedPeriodIndex === 6 ? "default" : "outline"}
                 size="sm"
@@ -186,6 +211,11 @@ export default function TasksPage() {
                 className="text-xs whitespace-nowrap font-bold"
               >
                 {periods[6].label}（現在）
+                <span className="ml-1 font-normal">
+                  ({settlementMonthStats[periods[6].label]?.count || 0}件/
+                  {settlementMonthStats[periods[6].label]?.monthlySales.toLocaleString() || 0}/
+                  {settlementMonthStats[periods[6].label]?.monthlySales.toLocaleString() || 0})
+                </span>
               </Button>
             </div>
           </div>
@@ -196,17 +226,23 @@ export default function TasksPage() {
               <ChevronDown className="h-4 w-4" />
             </Button>
             <div className="flex flex-wrap gap-1 flex-1">
-              {periods.slice(7, 13).map((period, index) => (
-                <Button
-                  key={`future-${index}`}
-                  variant={selectedPeriodIndex === index + 7 ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedPeriodIndex(index + 7)}
-                  className="text-xs whitespace-nowrap"
-                >
-                  {period.label}
-                </Button>
-              ))}
+              {periods.slice(7, 13).map((period, index) => {
+                const stats = settlementMonthStats[period.label] || { count: 0, monthlySales: 0 }
+                return (
+                  <Button
+                    key={`future-${index}`}
+                    variant={selectedPeriodIndex === index + 7 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedPeriodIndex(index + 7)}
+                    className="text-xs whitespace-nowrap"
+                  >
+                    {period.label}
+                    <span className="ml-1 font-normal">
+                      ({stats.count}件/{stats.monthlySales.toLocaleString()}/{stats.monthlySales.toLocaleString()})
+                    </span>
+                  </Button>
+                )
+              })}
             </div>
           </div>
         </div>

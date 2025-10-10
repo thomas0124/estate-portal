@@ -8,9 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { validateProperty } from "@/lib/validation"
 import { toast } from "sonner"
-import type { Property, PropertyType, PropertyStatus, PropertyCharacteristic } from "@/lib/types"
+import type { Property, PropertyType, PropertyStatus, PropertyCharacteristic, TransactionType } from "@/lib/types"
 
 interface PropertyEditDialogProps {
   property: Property | null
@@ -22,6 +23,7 @@ interface PropertyEditDialogProps {
 const PROPERTY_TYPES: PropertyType[] = ["一戸建て", "マンション", "土地", "その他"]
 const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "契約後", "販売中止"]
 const PROPERTY_CHARACTERISTICS: PropertyCharacteristic[] = ["相続", "通常", "離婚", "破産"]
+const TRANSACTION_TYPES: TransactionType[] = ["元付け(売)自社", "元付け(売)他社", "客付け(買)"]
 
 export function PropertyEditDialog({ property, open, onOpenChange, onSave }: PropertyEditDialogProps) {
   const [formData, setFormData] = useState<Partial<Property>>({})
@@ -40,9 +42,25 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
         companyName: "",
         handlerName: "",
         athomeNumber: "",
+        transactionType: "元付け(売)自社",
+        vendorCompanyName: "ライフリノベーション",
+        vendorContactPerson: "",
+        vendorPhone: "",
       })
     }
   }, [property, open])
+
+  const handleTransactionTypeChange = (value: TransactionType) => {
+    setFormData((prev) => {
+      const newFormData = { ...prev, transactionType: value }
+      if (value === "元付け(売)自社") {
+        newFormData.vendorCompanyName = "ライフリノベーション"
+      } else if (prev.vendorCompanyName === "ライフリノベーション") {
+        newFormData.vendorCompanyName = ""
+      }
+      return newFormData
+    })
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -182,6 +200,55 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
                 onChange={(e) => setFormData({ ...formData, infoSource: e.target.value })}
                 maxLength={100}
               />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>取引形態</Label>
+            <RadioGroup
+              value={formData.transactionType}
+              onValueChange={(value) => handleTransactionTypeChange(value as TransactionType)}
+              className="flex space-x-4"
+            >
+              {TRANSACTION_TYPES.map((type) => (
+                <div key={type} className="flex items-center space-x-2">
+                  <RadioGroupItem value={type} id={`transaction-type-${type}`} />
+                  <Label htmlFor={`transaction-type-${type}`}>{type}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+
+          <div className="space-y-2">
+            <Label>取引業者</Label>
+            <div className="grid grid-cols-3 gap-4 p-4 border rounded-md">
+              <div className="space-y-2">
+                <Label htmlFor="vendorCompanyName">社名</Label>
+                <Input
+                  id="vendorCompanyName"
+                  value={formData.vendorCompanyName || ""}
+                  onChange={(e) => setFormData({ ...formData, vendorCompanyName: e.target.value })}
+                  maxLength={200}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="vendorContactPerson">担当者</Label>
+                <Input
+                  id="vendorContactPerson"
+                  value={formData.vendorContactPerson || ""}
+                  onChange={(e) => setFormData({ ...formData, vendorContactPerson: e.target.value })}
+                  maxLength={50}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="vendorPhone">電話番号</Label>
+                <Input
+                  id="vendorPhone"
+                  value={formData.vendorPhone || ""}
+                  onChange={(e) => setFormData({ ...formData, vendorPhone: e.target.value })}
+                  maxLength={20}
+                />
+              </div>
             </div>
           </div>
 

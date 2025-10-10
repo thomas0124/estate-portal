@@ -17,7 +17,7 @@ interface TaskEditDialogProps {
   onSave: (task: PropertyTask) => void
 }
 
-const TASK_STATUSES: TaskStatus[] = ["手配中", "進行中", "完了", "未手配"]
+const TASK_STATUSES: TaskStatus[] = ["未手配", "未着手", "手配中", "進行中", "完了"]
 
 const TASK_LABELS: Record<string, string> = {
   reform: "リフォーム",

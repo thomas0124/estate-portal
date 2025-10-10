@@ -69,6 +69,20 @@ export function PropertyDetailDialog({ property, open, onOpenChange, onUpdate }:
                   <p>{property.infoSource}</p>
                 </div>
               )}
+              {property.transactionType && (
+                <div>
+                  <span className="text-muted-foreground">取引形態</span>
+                  <p>{property.transactionType}</p>
+                </div>
+              )}
+              {(property.vendorCompanyName || property.vendorContactPerson || property.vendorPhone) && (
+                <div className="col-span-2">
+                  <span className="text-muted-foreground">取引業者</span>
+                  <p>
+                    {property.vendorCompanyName} {property.vendorContactPerson} {property.vendorPhone}
+                  </p>
+                </div>
+              )}
               {property.keyLocation && (
                 <div>
                   <span className="text-muted-foreground">鍵の場所</span>

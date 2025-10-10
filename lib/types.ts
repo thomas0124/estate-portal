@@ -61,7 +61,7 @@ export interface Property {
 }
 
 // Post-Contract Task Types
-export type TaskStatus = "未手配" | "手配中" | "完了"
+export type TaskStatus = "未手配" | "未着手" | "手配中" | "進行中" | "完了"
 
 export interface TaskDetail {
   status: TaskStatus

@@ -59,6 +59,20 @@ export function PropertyHoverContent({ property }: PropertyHoverContentProps) {
             <p>{property.infoSource}</p>
           </div>
         )}
+        {property.transactionType && (
+          <div>
+            <span className="text-muted-foreground text-xs">取引形態</span>
+            <p>{property.transactionType}</p>
+          </div>
+        )}
+        {property.vendorCompanyName && (
+          <div className="col-span-2">
+            <span className="text-muted-foreground text-xs">取引業者</span>
+            <p>
+              {property.vendorCompanyName} {property.vendorContactPerson} {property.vendorPhone}
+            </p>
+          </div>
+        )}
         {property.keyLocation && (
           <div className="col-span-2">
             <span className="text-muted-foreground text-xs">鍵の場所</span>
