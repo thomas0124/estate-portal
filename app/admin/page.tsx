@@ -271,7 +271,7 @@ export default function AdminPage() {
                         <Input
                           value={buildingTypeName}
                           onChange={(e) => setBuildingTypeName(e.target.value)}
-                          placeholder="例: 一戸建て"
+                          placeholder="例: 戸建て"
                         />
                       </div>
                       <div className="space-y-2">

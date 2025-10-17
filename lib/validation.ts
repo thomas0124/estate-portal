@@ -36,7 +36,7 @@ export function validateEmail(email: string): boolean {
 
 // 物件タイプの検証
 export function isValidPropertyType(type: string): type is PropertyType {
-  return ["一戸建て", "マンション", "土地", "その他"].includes(type)
+  return ["戸建て", "マンション", "土地", "その他"].includes(type)
 }
 
 // 物件ステータスの検証

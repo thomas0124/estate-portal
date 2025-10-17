@@ -20,10 +20,10 @@ interface PropertyEditDialogProps {
   onSave: (property: Property) => void
 }
 
-const PROPERTY_TYPES: PropertyType[] = ["一戸建て", "マンション", "土地", "その他"]
+const PROPERTY_TYPES: PropertyType[] = ["戸建て", "マンション", "土地", "その他"]
 const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "契約後", "販売中止"]
 const PROPERTY_CHARACTERISTICS: PropertyCharacteristic[] = ["相続", "通常", "離婚", "破産"]
-const TRANSACTION_TYPES: TransactionType[] = ["元付け(売)自社", "元付け(売)他社", "客付け(買)"]
+const TRANSACTION_TYPES: TransactionType[] = ["元付(売)自社", "元付(売)他社", "客付(買)"]
 
 export function PropertyEditDialog({ property, open, onOpenChange, onSave }: PropertyEditDialogProps) {
   const [formData, setFormData] = useState<Partial<Property>>({})
@@ -35,14 +35,14 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
       setFormData({
         propertyNumber: 0,
         propertyName: "",
-        propertyType: "一戸建て",
+        propertyType: "戸建て",
         characteristic: "通常",
         status: "仲介物件",
         price: 0,
         companyName: "",
         handlerName: "",
         athomeNumber: "",
-        transactionType: "元付け(売)自社",
+        transactionType: "元付(売)自社",
         vendorCompanyName: "ライフリノベーション",
         vendorContactPerson: "",
         vendorPhone: "",
@@ -53,7 +53,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
   const handleTransactionTypeChange = (value: TransactionType) => {
     setFormData((prev) => {
       const newFormData = { ...prev, transactionType: value }
-      if (value === "元付け(売)自社") {
+      if (value === "元付(売)自社") {
         newFormData.vendorCompanyName = "ライフリノベーション"
       } else if (prev.vendorCompanyName === "ライフリノベーション") {
         newFormData.vendorCompanyName = ""

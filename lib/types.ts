@@ -12,13 +12,13 @@ export interface User {
 }
 
 // Property Types
-export type PropertyType = "一戸建て" | "マンション" | "土地" | "その他"
+export type PropertyType = "戸建て" | "マンション" | "土地" | "その他"
 
 export type PropertyStatus = "仲介物件" | "業者物件" | "所有物件" | "契約後" | "販売中止"
 
 export type PropertyCharacteristic = "相続" | "通常" | "離婚" | "破産"
 
-export type TransactionType = "元付け(売)自社" | "元付け(売)他社" | "客付け(買)"
+export type TransactionType = "元付(売)自社" | "元付(売)他社" | "客付(買)"
 
 export interface Property {
   id: string

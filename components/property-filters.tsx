@@ -17,7 +17,7 @@ interface PropertyFiltersProps {
   onReset: () => void
 }
 
-const PROPERTY_TYPES: PropertyType[] = ["一戸建て", "マンション", "土地", "その他"]
+const PROPERTY_TYPES: PropertyType[] = ["戸建て", "マンション", "土地", "その他"]
 const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "契約後"]
 
 export function PropertyFilters({
