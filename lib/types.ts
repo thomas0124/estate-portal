@@ -64,7 +64,7 @@ export interface Property {
 }
 
 // Post-Contract Task Types
-export type TaskStatus = "未手配" | "未着手" | "手配中" | "進行中" | "完了"
+export type TaskStatus = "不要" | "未手配" | "手配中" | "完了"
 
 export type LoanProcedureStatus = "未手配" | "本申込済" | "金商契約済"
 export type RegistrationStatus = "未手配" | "手配中" | "手配済（決済場所も手配済）"

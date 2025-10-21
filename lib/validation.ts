@@ -46,7 +46,7 @@ export function isValidPropertyStatus(status: string): status is PropertyStatus 
 
 // タスクステータスの検証
 export function isValidTaskStatus(status: string): status is TaskStatus {
-  return ["未手配", "手配中", "完了"].includes(status)
+  return ["不要", "未手配", "手配中", "完了"].includes(status)
 }
 
 // 物件データの検証

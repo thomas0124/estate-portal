@@ -24,7 +24,7 @@ interface TaskEditDialogProps {
   onSave: (task: PropertyTask) => void
 }
 
-const TASK_STATUSES: TaskStatus[] = ["未手配", "未着手", "手配中", "進行中", "完了"]
+const TASK_STATUSES: TaskStatus[] = ["不要", "未手配", "手配中", "完了"]
 const LOAN_PROCEDURE_STATUSES: LoanProcedureStatus[] = ["未手配", "本申込済", "金商契約済"]
 const REGISTRATION_STATUSES: RegistrationStatus[] = ["未手配", "手配中", "手配済（決済場所も手配済）"]
 const MORTGAGE_CANCELLATION_STATUSES: MortgageCancellationStatus[] = ["不要", "未手配", "手配中", "完了"]
@@ -41,7 +41,7 @@ const TASK_LABELS: Record<string, string> = {
 }
 
 export function TaskEditDialog({ task, taskField, open, onOpenChange, onSave }: TaskEditDialogProps) {
-  const [taskDetail, setTaskDetail] = useState<TaskDetail>({ status: "手配中" })
+  const [taskDetail, setTaskDetail] = useState<TaskDetail>({ status: "未手配" })
 
   useEffect(() => {
     if (task && taskField) {
@@ -49,7 +49,7 @@ export function TaskEditDialog({ task, taskField, open, onOpenChange, onSave }: 
       if (typeof detail === "object" && detail !== null && "status" in detail) {
         setTaskDetail(detail as TaskDetail)
       } else {
-        setTaskDetail({ status: "手配中" })
+        setTaskDetail({ status: "未手配" })
       }
     }
   }, [task, taskField])
