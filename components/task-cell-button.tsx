@@ -1,7 +1,7 @@
 'use client'
 
 import { Badge } from "@/components/ui/badge"
-import type { TaskDetail, TaskStatus, LoanProcedureStatus } from "@/lib/types"
+import type { TaskDetail, TaskStatus, LoanProcedureStatus, RegistrationStatus } from "@/lib/types"
 import { Clock, Play, Check, Minus, AlertCircle } from "lucide-react"
 
 interface TaskCellButtonProps {
@@ -27,7 +27,16 @@ const loanProcedureStatusConfig: Record<
   金商契約済: { icon: Check, color: "bg-green-200 text-green-800", label: "金商契約済" },
 }
 
-const allStatusConfigs = { ...statusConfig, ...loanProcedureStatusConfig }
+const registrationStatusConfig: Record<
+  RegistrationStatus,
+  { icon: React.ElementType; color: string; label: string }
+> = {
+  未手配: { icon: Minus, color: "bg-slate-200 text-slate-600", label: "未手配" },
+  手配中: { icon: Clock, color: "bg-blue-100 text-blue-800", label: "手配中" },
+  "手配済（決済場所も手配済）": { icon: Check, color: "bg-green-200 text-green-800", label: "手配済" },
+}
+
+const allStatusConfigs = { ...statusConfig, ...loanProcedureStatusConfig, ...registrationStatusConfig }
 
 export function TaskCellButton({ taskDetail, isOverdue, onClick }: TaskCellButtonProps) {
   const config = allStatusConfigs[taskDetail.status as keyof typeof allStatusConfigs]

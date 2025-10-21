@@ -7,7 +7,14 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import type { PropertyTask, TaskStatus, TaskDetail, LoanProcedureStatus } from "@/lib/types"
+import type {
+  PropertyTask,
+  TaskStatus,
+  TaskDetail,
+  LoanProcedureStatus,
+  RegistrationStatus,
+  MortgageCancellationStatus,
+} from "@/lib/types"
 
 interface TaskEditDialogProps {
   task: PropertyTask | null
@@ -19,6 +26,8 @@ interface TaskEditDialogProps {
 
 const TASK_STATUSES: TaskStatus[] = ["未手配", "未着手", "手配中", "進行中", "完了"]
 const LOAN_PROCEDURE_STATUSES: LoanProcedureStatus[] = ["未手配", "本申込済", "金商契約済"]
+const REGISTRATION_STATUSES: RegistrationStatus[] = ["未手配", "手配中", "手配済（決済場所も手配済）"]
+const MORTGAGE_CANCELLATION_STATUSES: MortgageCancellationStatus[] = ["不要", "未手配", "手配中", "完了"]
 
 const TASK_LABELS: Record<string, string> = {
   reform: "リフォーム",
@@ -61,7 +70,14 @@ export function TaskEditDialog({ task, taskField, open, onOpenChange, onSave }: 
   if (!task || !taskField) return null
 
   const taskLabel = TASK_LABELS[taskField as string] || taskField
-  const statuses = taskField === "loanProcedure" ? LOAN_PROCEDURE_STATUSES : TASK_STATUSES
+  const statuses =
+    taskField === "loanProcedure"
+      ? LOAN_PROCEDURE_STATUSES
+      : taskField === "registration"
+      ? REGISTRATION_STATUSES
+      : taskField === "mortgageCancellation"
+      ? MORTGAGE_CANCELLATION_STATUSES
+      : TASK_STATUSES
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -78,7 +94,14 @@ export function TaskEditDialog({ task, taskField, open, onOpenChange, onSave }: 
             <RadioGroup
               value={taskDetail.status}
               onValueChange={(value) =>
-                setTaskDetail({ ...taskDetail, status: value as TaskStatus | LoanProcedureStatus })
+                setTaskDetail({
+                  ...taskDetail,
+                  status: value as
+                    | TaskStatus
+                    | LoanProcedureStatus
+                    | RegistrationStatus
+                    | MortgageCancellationStatus,
+                })
               }
               className="grid grid-cols-3 gap-2"
             >
