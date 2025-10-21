@@ -4,30 +4,29 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import type { PropertyType, PropertyStatus } from "@/lib/types"
+import type { PropertyType, PropertyStatus, PropertyCharacteristic } from "@/lib/types"
 
 interface PropertyFiltersProps {
   selectedTypes: PropertyType[]
   selectedStatuses: PropertyStatus[]
-  selectedHandlers: string[]
-  availableHandlers: string[]
+  selectedCharacteristics: PropertyCharacteristic[]
   onTypeChange: (types: PropertyType[]) => void
   onStatusChange: (statuses: PropertyStatus[]) => void
-  onHandlerChange: (handlers: string[]) => void
+  onCharacteristicChange: (characteristics: PropertyCharacteristic[]) => void
   onReset: () => void
 }
 
 const PROPERTY_TYPES: PropertyType[] = ["戸建て", "マンション", "土地", "その他"]
 const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "契約後"]
+const ALL_CHARACTERISTICS: PropertyCharacteristic[] = ["相続", "通常", "離婚", "破産", "その他"]
 
 export function PropertyFilters({
   selectedTypes,
   selectedStatuses,
-  selectedHandlers,
-  availableHandlers,
+  selectedCharacteristics,
   onTypeChange,
   onStatusChange,
-  onHandlerChange,
+  onCharacteristicChange,
   onReset,
 }: PropertyFiltersProps) {
   const toggleType = (type: PropertyType) => {
@@ -46,11 +45,11 @@ export function PropertyFilters({
     }
   }
 
-  const toggleHandler = (handler: string) => {
-    if (selectedHandlers.includes(handler)) {
-      onHandlerChange(selectedHandlers.filter((h) => h !== handler))
+  const toggleCharacteristic = (characteristic: PropertyCharacteristic) => {
+    if (selectedCharacteristics.includes(characteristic)) {
+      onCharacteristicChange(selectedCharacteristics.filter((c) => c !== characteristic))
     } else {
-      onHandlerChange([...selectedHandlers, handler])
+      onCharacteristicChange([...selectedCharacteristics, characteristic])
     }
   }
 
@@ -97,17 +96,17 @@ export function PropertyFilters({
       <Separator />
 
       <div>
-        <h3 className="font-semibold mb-3">担当者</h3>
+        <h3 className="font-semibold mb-3">案件特性</h3>
         <div className="space-y-2">
-          {availableHandlers.map((handler) => (
-            <div key={handler} className="flex items-center space-x-2">
+          {ALL_CHARACTERISTICS.map((characteristic) => (
+            <div key={characteristic} className="flex items-center space-x-2">
               <Checkbox
-                id={`handler-${handler}`}
-                checked={selectedHandlers.includes(handler)}
-                onCheckedChange={() => toggleHandler(handler)}
+                id={`characteristic-${characteristic}`}
+                checked={selectedCharacteristics.includes(characteristic)}
+                onCheckedChange={() => toggleCharacteristic(characteristic)}
               />
-              <Label htmlFor={`handler-${handler}`} className="text-sm font-normal cursor-pointer">
-                {handler}
+              <Label htmlFor={`characteristic-${characteristic}`} className="text-sm font-normal cursor-pointer">
+                {characteristic}
               </Label>
             </div>
           ))}

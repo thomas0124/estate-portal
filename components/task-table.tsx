@@ -79,11 +79,10 @@ export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
               <TableHead className="text-xs font-bold min-w-[100px]">全体進捗</TableHead>
               <TableHead className="text-xs font-bold min-w-[110px]">決済日</TableHead>
               <TableHead className="text-xs font-bold min-w-[110px]">リフォーム</TableHead>
-              <TableHead className="text-xs font-bold min-w-[110px]">融資申込</TableHead>
-              <TableHead className="text-xs font-bold min-w-[110px]">融資契約</TableHead>
+              <TableHead className="text-xs font-bold min-w-[110px]">融資手続き</TableHead>
               <TableHead className="text-xs font-bold min-w-[130px]">土地家屋調査士</TableHead>
               <TableHead className="text-xs font-bold min-w-[110px]">解体</TableHead>
-              <TableHead className="text-xs font-bold min-w-[110px]">債権者報告</TableHead>
+              <TableHead className="text-xs font-bold min-w-[110px]">抵当権抹消</TableHead>
               <TableHead className="text-xs font-bold min-w-[110px]">登記</TableHead>
               <TableHead className="text-xs font-bold min-w-[130px]">決済場所手配</TableHead>
               <TableHead className="text-xs font-bold min-w-[110px]">後処理</TableHead>
@@ -137,16 +136,9 @@ export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
                     <TaskCellButton
-                      taskDetail={getTaskDetail(task, "loanApplication")}
-                      isOverdue={isOverdue(task, "loanApplication")}
-                      onClick={() => handleTaskCellClick(task, "loanApplication")}
-                    />
-                  </TableCell>
-                  <TableCell className="p-2 bg-amber-50">
-                    <TaskCellButton
-                      taskDetail={getTaskDetail(task, "loanContract")}
-                      isOverdue={isOverdue(task, "loanContract")}
-                      onClick={() => handleTaskCellClick(task, "loanContract")}
+                      taskDetail={getTaskDetail(task, "loanProcedure")}
+                      isOverdue={isOverdue(task, "loanProcedure")}
+                      onClick={() => handleTaskCellClick(task, "loanProcedure")}
                     />
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
@@ -165,9 +157,9 @@ export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
                     <TaskCellButton
-                      taskDetail={getTaskDetail(task, "creditorReport")}
-                      isOverdue={isOverdue(task, "creditorReport")}
-                      onClick={() => handleTaskCellClick(task, "creditorReport")}
+                      taskDetail={getTaskDetail(task, "mortgageCancellation")}
+                      isOverdue={isOverdue(task, "mortgageCancellation")}
+                      onClick={() => handleTaskCellClick(task, "mortgageCancellation")}
                     />
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">

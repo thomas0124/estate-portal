@@ -9,9 +9,12 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Checkbox } from "@/components/ui/checkbox"
 import { validateProperty } from "@/lib/validation"
 import { toast } from "sonner"
 import type { Property, PropertyType, PropertyStatus, PropertyCharacteristic, TransactionType } from "@/lib/types"
+import { formatPriceInManYen, parseManYenToNumber } from "@/lib/utils"
+import { MOCK_HANDLERS } from "@/lib/mock-data"
 
 interface PropertyEditDialogProps {
   property: Property | null
@@ -22,15 +25,25 @@ interface PropertyEditDialogProps {
 
 const PROPERTY_TYPES: PropertyType[] = ["戸建て", "マンション", "土地", "その他"]
 const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "契約後", "販売中止"]
-const PROPERTY_CHARACTERISTICS: PropertyCharacteristic[] = ["相続", "通常", "離婚", "破産"]
+const PROPERTY_CHARACTERISTICS: PropertyCharacteristic[] = ["相続", "通常", "離婚", "破産", "その他"]
 const TRANSACTION_TYPES: TransactionType[] = ["元付(売)自社", "元付(売)他社", "客付(買)"]
+
+const availableTransactionTypes: Record<string, TransactionType[]> = {
+  仲介物件: ["元付(売)自社", "元付(売)他社", "客付(買)"],
+  業者物件: ["元付(売)自社", "客付(買)"],
+  所有物件: ["元付(売)自社"],
+  契約後: ["元付(売)自社"],
+  販売中止: ["元付(売)自社"],
+}
 
 export function PropertyEditDialog({ property, open, onOpenChange, onSave }: PropertyEditDialogProps) {
   const [formData, setFormData] = useState<Partial<Property>>({})
+  const [priceInput, setPriceInput] = useState<string>("")
 
   useEffect(() => {
     if (property) {
       setFormData(property)
+      setPriceInput(property.price ? formatPriceInManYen(property.price) : "")
     } else {
       setFormData({
         propertyNumber: 0,
@@ -46,9 +59,28 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
         vendorCompanyName: "ライフリノベーション",
         vendorContactPerson: "",
         vendorPhone: "",
+        isOccupied: false,
+        isVacant: false,
+        keyPhotoUrl: undefined,
       })
+      setPriceInput("")
     }
   }, [property, open])
+
+  useEffect(() => {
+    if (formData.status) {
+      const allowedTypes = availableTransactionTypes[formData.status]
+      if (formData.transactionType && !allowedTypes.includes(formData.transactionType)) {
+        setFormData((prev) => ({ ...prev, transactionType: allowedTypes[0] }))
+      }
+    }
+  }, [formData.status])
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setPriceInput(value)
+    setFormData((prev) => ({ ...prev, price: parseManYenToNumber(value) || 0 }))
+  }
 
   const handleTransactionTypeChange = (value: TransactionType) => {
     setFormData((prev) => {
@@ -101,6 +133,8 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
     onOpenChange(false)
   }
 
+  const currentTransactionTypes = formData.status ? availableTransactionTypes[formData.status] : TRANSACTION_TYPES
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -145,17 +179,17 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="price">価格（円）</Label>
+              <Label htmlFor="price">価格（万円）</Label>
               <Input
                 id="price"
-                type="number"
-                value={formData.price || ""}
-                onChange={(e) => setFormData({ ...formData, price: Number.parseInt(e.target.value) || 0 })}
+                type="text"
+                value={priceInput}
+                onChange={handlePriceChange}
                 required
-                min="0"
               />
             </div>
           </div>
+
 
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-2 space-y-2">
@@ -171,13 +205,21 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
 
             <div className="space-y-2">
               <Label htmlFor="handlerName">担当者名</Label>
-              <Input
-                id="handlerName"
-                value={formData.handlerName || ""}
-                onChange={(e) => setFormData({ ...formData, handlerName: e.target.value })}
-                required
-                maxLength={50}
-              />
+              <Select
+                value={formData.handlerName}
+                onValueChange={(value) => setFormData({ ...formData, handlerName: value })}
+              >
+                <SelectTrigger id="handlerName">
+                  <SelectValue placeholder="担当者を選択" />
+                </SelectTrigger>
+                <SelectContent>
+                  {MOCK_HANDLERS.map((handler) => (
+                    <SelectItem key={handler.id} value={handler.name}>
+                      {handler.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -210,7 +252,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
               onValueChange={(value) => handleTransactionTypeChange(value as TransactionType)}
               className="flex space-x-4"
             >
-              {TRANSACTION_TYPES.map((type) => (
+              {currentTransactionTypes.map((type) => (
                 <div key={type} className="flex items-center space-x-2">
                   <RadioGroupItem value={type} id={`transaction-type-${type}`} />
                   <Label htmlFor={`transaction-type-${type}`}>{type}</Label>
@@ -252,25 +294,58 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="keyLocation">鍵の場所</Label>
-              <Input
-                id="keyLocation"
-                value={formData.keyLocation || ""}
-                onChange={(e) => setFormData({ ...formData, keyLocation: e.target.value })}
-                maxLength={100}
-              />
-            </div>
+          {formData.isVacant && (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="keyLocation">鍵の場所</Label>
+                <Input
+                  id="keyLocation"
+                  value={formData.keyLocation || ""}
+                  onChange={(e) => setFormData({ ...formData, keyLocation: e.target.value })}
+                  maxLength={100}
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="keyInfo">鍵の情報</Label>
-              <Input
-                id="keyInfo"
-                value={formData.keyInfo || ""}
-                onChange={(e) => setFormData({ ...formData, keyInfo: e.target.value })}
-                maxLength={100}
+              <div className="space-y-2">
+                <Label htmlFor="keyInfo">キーボックスの番号</Label>
+                <Input
+                  id="keyInfo"
+                  value={formData.keyInfo || ""}
+                  onChange={(e) => setFormData({ ...formData, keyInfo: e.target.value })}
+                  maxLength={100}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="isOccupied"
+                checked={formData.isOccupied}
+                onCheckedChange={(checked) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    isOccupied: checked as boolean,
+                    isVacant: checked ? false : prev.isVacant,
+                  }));
+                }}
               />
+              <Label htmlFor="isOccupied">居住中</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="isVacant"
+                checked={formData.isVacant}
+                onCheckedChange={(checked) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    isVacant: checked as boolean,
+                    isOccupied: checked ? false : prev.isOccupied,
+                  }));
+                }}
+              />
+              <Label htmlFor="isVacant">空室</Label>
             </div>
           </div>
 

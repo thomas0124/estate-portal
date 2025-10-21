@@ -11,8 +11,12 @@ import { PropertyList } from "@/components/property-list"
 import { PropertyEditDialog } from "@/components/property-edit-dialog"
 import { PropertyFilters } from "@/components/property-filters"
 import { getUniqueHandlers } from "@/lib/mock-data"
-import type { Property, PropertyType, PropertyStatus, SortOrder } from "@/lib/types"
+import type { Property, PropertyType, PropertyStatus, PropertyCharacteristic, SortOrder } from "@/lib/types"
 import { Plus, Search, ArrowUpDown, LogOut, ClipboardList, Settings, Menu } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+
+const ALL_CHARACTERISTICS: PropertyCharacteristic[] = ["相続", "通常", "離婚", "破産"]
 
 export default function PropertiesPage() {
   const router = useRouter()
@@ -25,6 +29,8 @@ export default function PropertiesPage() {
   const [selectedTypes, setSelectedTypes] = useState<PropertyType[]>([])
   const [selectedStatuses, setSelectedStatuses] = useState<PropertyStatus[]>([])
   const [selectedHandlers, setSelectedHandlers] = useState<string[]>([])
+  const [selectedCharacteristics, setSelectedCharacteristics] = useState<PropertyCharacteristic[]>([])
+  const [sortField, setSortField] = useState<"propertyNumber" | "price">("propertyNumber")
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc")
 
   useEffect(() => {
@@ -62,8 +68,12 @@ export default function PropertiesPage() {
       filtered = filtered.filter((p) => selectedHandlers.includes(p.handlerName))
     }
 
+    if (selectedCharacteristics.length > 0) {
+      filtered = filtered.filter((p) => p.characteristic && selectedCharacteristics.includes(p.characteristic))
+    }
+
     return filtered.length
-  }, [properties, searchQuery, selectedTypes, selectedStatuses, selectedHandlers])
+  }, [properties, searchQuery, selectedTypes, selectedStatuses, selectedHandlers, selectedCharacteristics])
 
   const handleNew = () => {
     setSelectedProperty(null)
@@ -74,7 +84,16 @@ export default function PropertiesPage() {
     setSelectedTypes([])
     setSelectedStatuses([])
     setSelectedHandlers([])
+    setSelectedCharacteristics([])
     setSearchQuery("")
+  }
+
+  const toggleHandler = (handler: string) => {
+    if (selectedHandlers.includes(handler)) {
+      setSelectedHandlers(selectedHandlers.filter((h) => h !== handler))
+    } else {
+      setSelectedHandlers([...selectedHandlers, handler])
+    }
   }
 
   if (isLoading) {
@@ -99,11 +118,10 @@ export default function PropertiesPage() {
         <PropertyFilters
           selectedTypes={selectedTypes}
           selectedStatuses={selectedStatuses}
-          selectedHandlers={selectedHandlers}
-          availableHandlers={availableHandlers}
+          selectedCharacteristics={selectedCharacteristics}
           onTypeChange={setSelectedTypes}
           onStatusChange={setSelectedStatuses}
-          onHandlerChange={setSelectedHandlers}
+          onCharacteristicChange={setSelectedCharacteristics}
           onReset={resetFilters}
         />
       </aside>
@@ -133,6 +151,25 @@ export default function PropertiesPage() {
             </div>
           </div>
 
+          {/* 担当者絞り込みを画面上部に移動 */}
+          <div className="bg-card rounded-lg border p-4 mb-4">
+            <h3 className="font-semibold mb-3">担当者</h3>
+            <div className="flex flex-wrap gap-2">
+              {availableHandlers.map((handler) => (
+                <div key={handler} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`handler-${handler}`}
+                    checked={selectedHandlers.includes(handler)}
+                    onCheckedChange={() => toggleHandler(handler)}
+                  />
+                  <Label htmlFor={`handler-${handler}`} className="text-sm font-normal cursor-pointer">
+                    {handler}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="flex items-center gap-2 mb-4 sm:mb-6">
             {/* Mobile Filter Button */}
             <Sheet>
@@ -147,11 +184,10 @@ export default function PropertiesPage() {
                 <PropertyFilters
                   selectedTypes={selectedTypes}
                   selectedStatuses={selectedStatuses}
-                  selectedHandlers={selectedHandlers}
-                  availableHandlers={availableHandlers}
+                  selectedCharacteristics={selectedCharacteristics}
                   onTypeChange={setSelectedTypes}
                   onStatusChange={setSelectedStatuses}
-                  onHandlerChange={setSelectedHandlers}
+                  onCharacteristicChange={setSelectedCharacteristics}
                   onReset={resetFilters}
                 />
               </SheetContent>
@@ -169,11 +205,20 @@ export default function PropertiesPage() {
             <Button
               variant="outline"
               size="sm"
+              onClick={() => setSortField(sortField === "propertyNumber" ? "price" : "propertyNumber")}
+              className="shrink-0"
+            >
+              <ArrowUpDown className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">ソート項目: {sortField === "propertyNumber" ? "物件番号" : "価格"}</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setSortOrder(sortOrder === "desc" ? "asc" : "desc")}
               className="shrink-0"
             >
               <ArrowUpDown className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">物件番号 {sortOrder === "desc" ? "降順" : "昇順"}</span>
+              <span className="hidden sm:inline">順序: {sortOrder === "desc" ? "降順" : "昇順"}</span>
             </Button>
             <Button onClick={handleNew} size="sm" className="shrink-0">
               <Plus className="h-4 w-4 sm:mr-2" />
@@ -186,6 +231,8 @@ export default function PropertiesPage() {
             selectedTypes={selectedTypes}
             selectedStatuses={selectedStatuses}
             selectedHandlers={selectedHandlers}
+            selectedCharacteristics={selectedCharacteristics}
+            sortField={sortField}
             sortOrder={sortOrder}
           />
         </div>

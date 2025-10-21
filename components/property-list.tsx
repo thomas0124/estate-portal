@@ -4,7 +4,7 @@ import { useState, useMemo } from "react"
 import { PropertyCard } from "@/components/property-card"
 import { PropertyDetailDialog } from "@/components/property-detail-dialog"
 import { useData } from "@/lib/data-context"
-import type { Property, PropertyType, PropertyStatus, SortOrder } from "@/lib/types"
+import type { Property, PropertyType, PropertyStatus, PropertyCharacteristic, SortOrder } from "@/lib/types"
 import { getHandlerColor } from "@/lib/mock-data"
 
 interface PropertyListProps {
@@ -12,6 +12,8 @@ interface PropertyListProps {
   selectedTypes: PropertyType[]
   selectedStatuses: PropertyStatus[]
   selectedHandlers: string[]
+  selectedCharacteristics: PropertyCharacteristic[]
+  sortField: "propertyNumber" | "price"
   sortOrder: SortOrder
 }
 
@@ -20,6 +22,8 @@ export function PropertyList({
   selectedTypes,
   selectedStatuses,
   selectedHandlers,
+  selectedCharacteristics,
+  sortField,
   sortOrder,
 }: PropertyListProps) {
   const { properties, updateProperty, addProperty } = useData()
@@ -53,15 +57,33 @@ export function PropertyList({
       filtered = filtered.filter((p) => selectedHandlers.includes(p.handlerName))
     }
 
+    if (selectedCharacteristics.length > 0) {
+      filtered = filtered.filter((p) => p.characteristic && selectedCharacteristics.includes(p.characteristic))
+    }
+
     filtered.sort((a, b) => {
-      if (sortOrder === "desc") {
-        return b.propertyNumber - a.propertyNumber
+      let compareA: number | string = 0
+      let compareB: number | string = 0
+
+      if (sortField === "propertyNumber") {
+        compareA = a.propertyNumber
+        compareB = b.propertyNumber
+      } else if (sortField === "price") {
+        compareA = a.price
+        compareB = b.price
       }
-      return a.propertyNumber - b.propertyNumber
+
+      if (compareA < compareB) {
+        return sortOrder === "asc" ? -1 : 1
+      }
+      if (compareA > compareB) {
+        return sortOrder === "asc" ? 1 : -1
+      }
+      return 0
     })
 
     return filtered
-  }, [properties, searchQuery, selectedTypes, selectedStatuses, selectedHandlers, sortOrder])
+  }, [properties, searchQuery, selectedTypes, selectedStatuses, selectedHandlers, selectedCharacteristics, sortField, sortOrder])
 
   const handleSave = (property: Property) => {
     if (properties.find((p) => p.id === property.id)) {

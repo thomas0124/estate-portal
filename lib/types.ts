@@ -16,7 +16,7 @@ export type PropertyType = "戸建て" | "マンション" | "土地" | "その�
 
 export type PropertyStatus = "仲介物件" | "業者物件" | "所有物件" | "契約後" | "販売中止"
 
-export type PropertyCharacteristic = "相続" | "通常" | "離婚" | "破産"
+export type PropertyCharacteristic = "相続" | "通常" | "離婚" | "破産" | "その他"
 
 export type TransactionType = "元付(売)自社" | "元付(売)他社" | "客付(買)"
 
@@ -39,6 +39,9 @@ export interface Property {
   keyLocation?: string // 鍵の場所
   keyInfo?: string // 鍵の情報
   publicInfo?: string // 公開情報
+  isOccupied?: boolean // 居住中
+  isVacant?: boolean // 空室
+  keyPhotoUrl?: string // 鍵の場所の写真URL
 
   // 取引業者情報
   vendorCompanyName?: string // 取引業者社名
@@ -63,8 +66,12 @@ export interface Property {
 // Post-Contract Task Types
 export type TaskStatus = "未手配" | "未着手" | "手配中" | "進行中" | "完了"
 
-export interface TaskDetail {
-  status: TaskStatus
+export type LoanProcedureStatus = "未手配" | "本申込済" | "金商契約済"
+export type RegistrationStatus = "未手配" | "手配中" | "手配済"
+export type MortgageCancellationStatus = "不要" | "未手配" | "手配中" | "完了"
+
+export interface TaskDetail<TStatus = TaskStatus> {
+  status: TStatus
   plannedDate?: Date // 予定日
   completionDate?: Date // 完了日
   companyName?: string // 業者名
@@ -88,12 +95,11 @@ export interface PropertyTask {
   estimatedSales: string // 売上見込み (例: "87/87")
 
   reform: TaskDetail // リフォーム
-  loanApplication: TaskDetail // 融資申込
-  loanContract: TaskDetail // 融資契約
+  loanProcedure: TaskDetail<LoanProcedureStatus> // 融資手続き
   survey: TaskDetail // 土地家屋調査士
   demolition: TaskDetail // 解体
-  creditorReport: TaskDetail // 債権者報告
-  registration: TaskDetail // 登記
+  mortgageCancellation: TaskDetail<MortgageCancellationStatus> // 抵当権抹消
+  registration: TaskDetail<RegistrationStatus> // 登記
   venueArrangement: TaskDetail // 決済場所手配
   postProcessing: TaskDetail // 後処理（進捗に影響しない）
 

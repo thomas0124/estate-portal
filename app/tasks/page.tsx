@@ -22,6 +22,7 @@ export default function TasksPage() {
   const [showAllHandlers, setShowAllHandlers] = useState(true)
   const [selectedHandlers, setSelectedHandlers] = useState<string[]>([])
   const [showCompleted, setShowCompleted] = useState(false)
+  const [showAllSettlementMonths, setShowAllSettlementMonths] = useState(false)
   const [periods, setPeriods] = useState<Period[]>(getMonthlyPeriods())
   const [selectedPeriodIndex, setSelectedPeriodIndex] = useState(getCurrentMonthIndex())
 
@@ -32,15 +33,12 @@ export default function TasksPage() {
   }, [user, isLoading, router])
 
   const toggleHandler = (handlerName: string) => {
-    setShowAllHandlers(false)
     if (selectedHandlers.includes(handlerName)) {
-      const newSelected = selectedHandlers.filter((h) => h !== handlerName)
-      if (newSelected.length === 0) {
-        setShowAllHandlers(true)
-      }
-      setSelectedHandlers(newSelected)
+      setSelectedHandlers([])
+      setShowAllHandlers(true)
     } else {
-      setSelectedHandlers([...selectedHandlers, handlerName])
+      setSelectedHandlers([handlerName])
+      setShowAllHandlers(false)
     }
   }
 
@@ -61,18 +59,20 @@ export default function TasksPage() {
       filtered = filtered.filter((t) => selectedHandlers.includes(t.handlerName))
     }
 
-    const selectedPeriod = periods[selectedPeriodIndex]
-    filtered = filtered.filter((t) => {
-      const settlementDate = new Date(t.settlementDate)
-      return settlementDate >= selectedPeriod.start && settlementDate <= selectedPeriod.end
-    })
+    if (!showAllSettlementMonths) {
+      const selectedPeriod = periods[selectedPeriodIndex]
+      filtered = filtered.filter((t) => {
+        const settlementDate = new Date(t.settlementDate)
+        return settlementDate >= selectedPeriod.start && settlementDate <= selectedPeriod.end
+      })
+    }
 
     if (!showCompleted) {
       filtered = filtered.filter((t) => !isTaskCompleted(t))
     }
 
     return filtered
-  }, [tasks, showAllHandlers, selectedHandlers, periods, selectedPeriodIndex, showCompleted])
+  }, [tasks, showAllHandlers, selectedHandlers, periods, selectedPeriodIndex, showCompleted, showAllSettlementMonths])
 
   const statistics = useMemo(() => {
     const count = filteredTasks.length
@@ -106,11 +106,13 @@ export default function TasksPage() {
     const stats: Record<string, { count: number; totalSales: number }> = {}
 
     let tasksForStats = tasks
-    const selectedPeriod = periods[selectedPeriodIndex]
-    tasksForStats = tasksForStats.filter((t) => {
-      const settlementDate = new Date(t.settlementDate)
-      return settlementDate >= selectedPeriod.start && settlementDate <= selectedPeriod.end
-    })
+    if (!showAllSettlementMonths) {
+      const selectedPeriod = periods[selectedPeriodIndex]
+      tasksForStats = tasksForStats.filter((t) => {
+        const settlementDate = new Date(t.settlementDate)
+        return settlementDate >= selectedPeriod.start && settlementDate <= selectedPeriod.end
+      })
+    }
 
     tasksForStats.forEach((task) => {
       if (!stats[task.handlerName]) {
@@ -122,7 +124,7 @@ export default function TasksPage() {
     })
 
     return stats
-  }, [tasks, periods, selectedPeriodIndex])
+  }, [tasks, periods, selectedPeriodIndex, showAllSettlementMonths])
 
   const handlePeriodNavigate = (direction: "up" | "down") => {
     setPeriods(shiftMonthlyPeriods(periods, direction))
@@ -181,6 +183,19 @@ export default function TasksPage() {
       <div>
         <h3 className="font-semibold mb-3 text-sm">決済月</h3>
         <div className="space-y-2">
+          <div className="flex flex-wrap gap-1 mb-2">
+            <Button
+              variant={showAllSettlementMonths ? "default" : "outline"}
+              size="sm"
+              onClick={() => {
+                setShowAllSettlementMonths(true)
+                setSelectedPeriodIndex(-1) // Special value for "show all"
+              }}
+              className="text-xs whitespace-nowrap"
+            >
+              すべてを表示
+            </Button>
+          </div>
           {/* 1行目: 過去6ヶ月 + 現在月 */}
           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" onClick={() => handlePeriodNavigate("up")} className="shrink-0">
@@ -192,9 +207,12 @@ export default function TasksPage() {
                 return (
                   <Button
                     key={`past-${index}`}
-                    variant={selectedPeriodIndex === index ? "default" : "outline"}
+                    variant={selectedPeriodIndex === index && !showAllSettlementMonths ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setSelectedPeriodIndex(index)}
+                    onClick={() => {
+                      setShowAllSettlementMonths(false)
+                      setSelectedPeriodIndex(index)
+                    }}
                     className="text-xs whitespace-nowrap"
                   >
                     {period.label}
@@ -205,9 +223,12 @@ export default function TasksPage() {
                 )
               })}
               <Button
-                variant={selectedPeriodIndex === 6 ? "default" : "outline"}
+                variant={selectedPeriodIndex === 6 && !showAllSettlementMonths ? "default" : "outline"}
                 size="sm"
-                onClick={() => setSelectedPeriodIndex(6)}
+                onClick={() => {
+                  setShowAllSettlementMonths(false)
+                  setSelectedPeriodIndex(6)
+                }}
                 className="text-xs whitespace-nowrap font-bold"
               >
                 {periods[6].label}（現在）
@@ -231,9 +252,12 @@ export default function TasksPage() {
                 return (
                   <Button
                     key={`future-${index}`}
-                    variant={selectedPeriodIndex === index + 7 ? "default" : "outline"}
+                    variant={selectedPeriodIndex === index + 7 && !showAllSettlementMonths ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setSelectedPeriodIndex(index + 7)}
+                    onClick={() => {
+                      setShowAllSettlementMonths(false)
+                      setSelectedPeriodIndex(index + 7)
+                    }}
                     className="text-xs whitespace-nowrap"
                   >
                     {period.label}

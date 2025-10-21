@@ -5,8 +5,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { PropertyEditDialog } from "./property-edit-dialog"
-import type { Property } from "@/lib/types"
+import type { Property, BuildingType } from "@/lib/types"
 import { Pencil } from "lucide-react"
+import { formatPriceInManYen } from "@/lib/utils"
+import { MOCK_BUILDING_TYPES } from "@/lib/mock-data"
 
 interface PropertyDetailDialogProps {
   property: Property | null
@@ -30,6 +32,8 @@ export function PropertyDetailDialog({ property, open, onOpenChange, onUpdate }:
     onOpenChange(false)
   }
 
+  const buildingType = MOCK_BUILDING_TYPES.find((bt) => bt.name === property.propertyType)
+
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -41,7 +45,7 @@ export function PropertyDetailDialog({ property, open, onOpenChange, onUpdate }:
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-muted-foreground">価格</span>
-                <p className="font-semibold text-lg">¥{property.price.toLocaleString()}</p>
+                <p className="font-semibold text-lg">{formatPriceInManYen(property.price)}</p>
               </div>
               <div>
                 <span className="text-muted-foreground">ステータス</span>
@@ -91,8 +95,14 @@ export function PropertyDetailDialog({ property, open, onOpenChange, onUpdate }:
               )}
               {property.keyInfo && (
                 <div>
-                  <span className="text-muted-foreground">鍵の情報</span>
+                  <span className="text-muted-foreground">キーボックスの番号</span>
                   <p>{property.keyInfo}</p>
+                </div>
+              )}
+              {property.keyPhotoUrl && (
+                <div className="col-span-2">
+                  <span className="text-muted-foreground">鍵の場所の写真</span>
+                  <img src={property.keyPhotoUrl} alt="Key Location" className="mt-1 max-w-full h-auto rounded-md" />
                 </div>
               )}
               {property.publicInfo && (
@@ -108,6 +118,7 @@ export function PropertyDetailDialog({ property, open, onOpenChange, onUpdate }:
               <div>
                 <span className="text-muted-foreground">種別</span>
                 <div className="flex items-center gap-2">
+                  {buildingType?.icon && <span className="text-base">{buildingType.icon}</span>}
                   <p>{property.propertyType}</p>
                   {property.characteristic && <Badge variant="secondary">{property.characteristic}</Badge>}
                 </div>

@@ -2,19 +2,14 @@
 
 import { Badge } from "@/components/ui/badge"
 import type { Property } from "@/lib/types"
+import { formatPriceInManYen } from "@/lib/utils"
+import { statusColors } from "@/lib/config"
 
 interface PropertyHoverContentProps {
   property: Property
 }
 
 export function PropertyHoverContent({ property }: PropertyHoverContentProps) {
-  const statusColors: Record<string, string> = {
-    仲介物件: "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20",
-    業者物件: "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20",
-    所有物件: "bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20",
-    契約後: "bg-success/10 text-success border-success/20",
-    販売中止: "bg-muted text-muted-foreground border-border",
-  }
 
   return (
     <div className="space-y-3 p-2">
@@ -22,7 +17,7 @@ export function PropertyHoverContent({ property }: PropertyHoverContentProps) {
       <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
         <div>
           <span className="text-muted-foreground text-xs">価格</span>
-          <p className="font-semibold">¥{property.price.toLocaleString()}</p>
+          <p className="font-semibold">{formatPriceInManYen(property.price)}</p>
         </div>
         <div>
           <span className="text-muted-foreground text-xs">ステータス</span>
@@ -81,20 +76,21 @@ export function PropertyHoverContent({ property }: PropertyHoverContentProps) {
         )}
         {property.keyInfo && (
           <div className="col-span-2">
-            <span className="text-muted-foreground text-xs">鍵の情報</span>
+            <span className="text-muted-foreground text-xs">キーボックスの番号</span>
             <p className="whitespace-pre-wrap">{property.keyInfo}</p>
+          </div>
+        )}
+        {property.keyPhotoUrl && (
+          <div className="col-span-2">
+            <span className="text-muted-foreground text-xs">鍵の場所の写真</span>
+            <img src={property.keyPhotoUrl} alt="Key Location" className="mt-1 max-w-full h-auto rounded-md" />
           </div>
         )}
         <div className="col-span-2">
           <span className="text-muted-foreground text-xs">物件番号</span>
           <p className="font-mono">{property.propertyNumber}</p>
         </div>
-        {property.athomeNumber && (
-          <div className="col-span-2">
-            <span className="text-muted-foreground text-xs">アットホーム番号</span>
-            <p className="font-mono">{property.athomeNumber}</p>
-          </div>
-        )}
+        
       </div>
     </div>
   )
