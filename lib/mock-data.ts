@@ -184,10 +184,7 @@ export const MOCK_TASKS: PropertyTask[] = [
       status: "完了",
       completionDate: new Date("2025-08-05"),
     },
-    loanApplication: {
-      status: "未手配",
-    },
-    loanContract: {
+    loanProcedure: {
       status: "未手配",
     },
     survey: {
@@ -198,7 +195,7 @@ export const MOCK_TASKS: PropertyTask[] = [
     demolition: {
       status: "未手配",
     },
-    creditorReport: {
+    mortgageCancellation: {
       status: "完了",
       completionDate: new Date("2025-08-15"),
     },
@@ -230,11 +227,10 @@ export const MOCK_TASKS: PropertyTask[] = [
     estimatedSales: "80/70",
     sellerName: "佐藤花子",
     reform: { status: "手配中", companyName: "リフォーム太郎", plannedDate: new Date("2025-03-10") },
-    loanApplication: { status: "手配中", bankName: "三菱UFJ銀行" },
-    loanContract: { status: "手配中" },
+    loanProcedure: { status: "本申込済", bank: "三菱UFJ銀行" },
     survey: { status: "完了", completionDate: new Date("2025-02-20") },
     demolition: { status: "未手配" },
-    creditorReport: { status: "手配中" },
+    mortgageCancellation: { status: "手配中" },
     registration: { status: "手配中", judicialScrivener: "田中司法書士" },
     venueArrangement: { status: "手配中" },
     postProcessing: { status: "手配中" },
@@ -256,11 +252,10 @@ export const MOCK_TASKS: PropertyTask[] = [
     estimatedSales: "120/100",
     buyerName: "高橋健太",
     reform: { status: "完了", completionDate: new Date("2025-03-15") },
-    loanApplication: { status: "完了", completionDate: new Date("2025-03-01") },
-    loanContract: { status: "完了", completionDate: new Date("2025-03-10") },
+    loanProcedure: { status: "金商契約済" },
     survey: { status: "完了", completionDate: new Date("2025-02-25") },
     demolition: { status: "未手配" },
-    creditorReport: { status: "完了", completionDate: new Date("2025-03-05") },
+    mortgageCancellation: { status: "完了", completionDate: new Date("2025-03-05") },
     registration: { status: "手配中", judicialScrivener: "金沢法務" },
     venueArrangement: { status: "完了" },
     postProcessing: { status: "手配中" },
@@ -281,11 +276,10 @@ export const MOCK_TASKS: PropertyTask[] = [
     price: 8200,
     estimatedSales: "150/130",
     reform: { status: "手配中", companyName: "横浜リフォーム", plannedDate: new Date("2025-04-15") },
-    loanApplication: { status: "手配中", bankName: "みずほ銀行" },
-    loanContract: { status: "手配中" },
+    loanProcedure: { status: "本申込済", bank: "みずほ銀行" },
     survey: { status: "手配中", companyName: "横浜測量", plannedDate: new Date("2025-04-01") },
     demolition: { status: "未手配" },
-    creditorReport: { status: "手配中" },
+    mortgageCancellation: { status: "手配中" },
     registration: { status: "手配中", judicialScrivener: "横浜司法書士" },
     venueArrangement: { status: "手配中" },
     postProcessing: { status: "手配中" },
@@ -306,11 +300,10 @@ export const MOCK_TASKS: PropertyTask[] = [
     price: 3900,
     estimatedSales: "60/50",
     reform: { status: "手配中", companyName: "博多リノベ", plannedDate: new Date("2025-05-10") },
-    loanApplication: { status: "手配中", bankName: "福岡銀行" },
-    loanContract: { status: "手配中" },
+    loanProcedure: { status: "本申込済", bank: "福岡銀行" },
     survey: { status: "完了", completionDate: new Date("2025-03-25") },
     demolition: { status: "未手配" },
-    creditorReport: { status: "手配中" },
+    mortgageCancellation: { status: "手配中" },
     registration: { status: "手配中", judicialScrivener: "福岡法務" },
     venueArrangement: { status: "手配中" },
     postProcessing: { status: "手配中" },
@@ -331,11 +324,10 @@ export const MOCK_TASKS: PropertyTask[] = [
     price: 5200,
     estimatedSales: "90/80",
     reform: { status: "手配中", companyName: "札幌リフォーム", plannedDate: new Date("2025-06-01") },
-    loanApplication: { status: "手配中", bankName: "北海道銀行" },
-    loanContract: { status: "手配中" },
+    loanProcedure: { status: "本申込済", bank: "北海道銀行" },
     survey: { status: "手配中", companyName: "札幌測量", plannedDate: new Date("2025-05-15") },
     demolition: { status: "未手配" },
-    creditorReport: { status: "手配中" },
+    mortgageCancellation: { status: "手配中" },
     registration: { status: "手配中", judicialScrivener: "札幌司法書士" },
     venueArrangement: { status: "手配中" },
     postProcessing: { status: "手配中" },
@@ -356,11 +348,10 @@ export const MOCK_TASKS: PropertyTask[] = [
     price: 4100,
     estimatedSales: "70/60",
     reform: { status: "手配中", companyName: "仙台リノベ", plannedDate: new Date("2025-06-20") },
-    loanApplication: { status: "手配中", bankName: "七十七銀行" },
-    loanContract: { status: "手配中" },
+    loanProcedure: { status: "本申込済", bank: "七十七銀行" },
     survey: { status: "手配中", companyName: "仙台測量", plannedDate: new Date("2025-06-01") },
     demolition: { status: "未手配" },
-    creditorReport: { status: "手配中" },
+    mortgageCancellation: { status: "手配中" },
     registration: { status: "手配中", judicialScrivener: "仙台法務" },
     venueArrangement: { status: "手配中" },
     postProcessing: { status: "手配中" },
@@ -381,11 +372,10 @@ export const MOCK_TASKS: PropertyTask[] = [
     price: 7500,
     estimatedSales: "130/110",
     reform: { status: "手配中", companyName: "京都リフォーム", plannedDate: new Date("2025-07-15") },
-    loanApplication: { status: "手配中", bankName: "京都銀行" },
-    loanContract: { status: "手配中" },
+    loanProcedure: { status: "本申込済", bank: "京都銀行" },
     survey: { status: "手配中", companyName: "京都測量", plannedDate: new Date("2025-06-20") },
     demolition: { status: "未手配" },
-    creditorReport: { status: "手配中" },
+    mortgageCancellation: { status: "手配中" },
     registration: { status: "手配中", judicialScrivener: "京都司法書士" },
     venueArrangement: { status: "手配中" },
     postProcessing: { status: "手配中" },
@@ -406,11 +396,10 @@ export const MOCK_TASKS: PropertyTask[] = [
     price: 6300,
     estimatedSales: "110/90",
     reform: { status: "手配中", companyName: "神戸リノベ", plannedDate: new Date("2025-08-01") },
-    loanApplication: { status: "手配中", bankName: "みなと銀行" },
-    loanContract: { status: "手配中" },
+    loanProcedure: { status: "本申込済", bank: "みなと銀行" },
     survey: { status: "手配中", companyName: "神戸測量", plannedDate: new Date("2025-07-10") },
     demolition: { status: "未手配" },
-    creditorReport: { status: "手配中" },
+    mortgageCancellation: { status: "手配中" },
     registration: { status: "手配中", judicialScrivener: "神戸法務" },
     venueArrangement: { status: "手配中" },
     postProcessing: { status: "手配中" },
@@ -431,11 +420,10 @@ export const MOCK_TASKS: PropertyTask[] = [
     price: 4800,
     estimatedSales: "80/70",
     reform: { status: "手配中", companyName: "広島リフォーム", plannedDate: new Date("2025-09-01") },
-    loanApplication: { status: "手配中", bankName: "広島銀行" },
-    loanContract: { status: "手配中" },
+    loanProcedure: { status: "本申込済", bank: "広島銀行" },
     survey: { status: "手配中", companyName: "広島測量", plannedDate: new Date("2025-08-15") },
     demolition: { status: "未手配" },
-    creditorReport: { status: "手配中" },
+    mortgageCancellation: { status: "手配中" },
     registration: { status: "手配中", judicialScrivener: "広島司法書士" },
     venueArrangement: { status: "手配中" },
     postProcessing: { status: "手配中" },
@@ -456,11 +444,10 @@ export const MOCK_TASKS: PropertyTask[] = [
     price: 3700,
     estimatedSales: "60/50",
     reform: { status: "完了", completionDate: new Date("2025-03-01") },
-    loanApplication: { status: "完了", completionDate: new Date("2025-02-15") },
-    loanContract: { status: "完了", completionDate: new Date("2025-02-25") },
+    loanProcedure: { status: "金商契約済" },
     survey: { status: "完了", completionDate: new Date("2025-02-10") },
     demolition: { status: "未手配" },
-    creditorReport: { status: "完了", completionDate: new Date("2025-02-20") },
+    mortgageCancellation: { status: "完了", completionDate: new Date("2025-02-20") },
     registration: { status: "手配中", judicialScrivener: "金沢法務" },
     venueArrangement: { status: "完了" },
     postProcessing: { status: "手配中" },
@@ -481,11 +468,10 @@ export const MOCK_TASKS: PropertyTask[] = [
     price: 4200,
     estimatedSales: "70/60",
     reform: { status: "手配中", companyName: "岡山リノベ", plannedDate: new Date("2025-04-01") },
-    loanApplication: { status: "手配中", bankName: "中国銀行" },
-    loanContract: { status: "手配中" },
+    loanProcedure: { status: "本申込済", bank: "中国銀行" },
     survey: { status: "完了", completionDate: new Date("2025-03-05") },
     demolition: { status: "未手配" },
-    creditorReport: { status: "手配中" },
+    mortgageCancellation: { status: "手配中" },
     registration: { status: "手配中", judicialScrivener: "岡山司法書士" },
     venueArrangement: { status: "手配中" },
     postProcessing: { status: "手配中" },
@@ -506,11 +492,10 @@ export const MOCK_TASKS: PropertyTask[] = [
     price: 3500,
     estimatedSales: "55/45",
     reform: { status: "手配中", companyName: "熊本リフォーム", plannedDate: new Date("2025-05-20") },
-    loanApplication: { status: "手配中", bankName: "肥後銀行" },
-    loanContract: { status: "手配中" },
+    loanProcedure: { status: "本申込済", bank: "肥後銀行" },
     survey: { status: "手配中", companyName: "熊本測量", plannedDate: new Date("2025-05-01") },
     demolition: { status: "未手配" },
-    creditorReport: { status: "手配中" },
+    mortgageCancellation: { status: "手配中" },
     registration: { status: "手配中", judicialScrivener: "熊本法務" },
     venueArrangement: { status: "手配中" },
     postProcessing: { status: "手配中" },
@@ -531,11 +516,10 @@ export const MOCK_TASKS: PropertyTask[] = [
     price: 3200,
     estimatedSales: "50/40",
     reform: { status: "手配中", companyName: "鹿児島リノベ", plannedDate: new Date("2025-07-01") },
-    loanApplication: { status: "手配中", bankName: "鹿児島銀行" },
-    loanContract: { status: "手配中" },
+    loanProcedure: { status: "本申込済", bank: "鹿児島銀行" },
     survey: { status: "手配中", companyName: "鹿児島測量", plannedDate: new Date("2025-06-15") },
     demolition: { status: "未手配" },
-    creditorReport: { status: "手配中" },
+    mortgageCancellation: { status: "手配中" },
     registration: { status: "手配中", judicialScrivener: "鹿児島司法書士" },
     venueArrangement: { status: "手配中" },
     postProcessing: { status: "手配中" },
@@ -556,11 +540,10 @@ export const MOCK_TASKS: PropertyTask[] = [
     price: 5500,
     estimatedSales: "95/85",
     reform: { status: "手配中", companyName: "沖縄リフォーム", plannedDate: new Date("2025-08-15") },
-    loanApplication: { status: "手配中", bankName: "琉球銀行" },
-    loanContract: { status: "手配中" },
+    loanProcedure: { status: "本申込済", bank: "琉球銀行" },
     survey: { status: "手配中", companyName: "沖縄測量", plannedDate: new Date("2025-07-20") },
     demolition: { status: "未手配" },
-    creditorReport: { status: "手配中" },
+    mortgageCancellation: { status: "手配中" },
     registration: { status: "手配中", judicialScrivener: "那覇法務" },
     venueArrangement: { status: "手配中" },
     postProcessing: { status: "手配中" },
@@ -601,25 +584,31 @@ export function getUniqueHandlers(properties: Property[]): string[] {
 export function calculateTaskProgress(task: PropertyTask): number {
   const taskFields: (keyof PropertyTask)[] = [
     "reform",
-    "loanApplication",
-    "loanContract",
+    "loanProcedure",
     "survey",
     "demolition",
-    "creditorReport",
+    "mortgageCancellation",
     "registration",
     "venueArrangement",
     // postProcessing は進捗計算に含めない
   ]
 
-  const completedCount = taskFields.filter((field) => {
+  const completedStatuses = ["完了", "不要", "金商契約済", "手配済（決済場所も手配済）"]
+
+  const completedTasks = taskFields.filter((field) => {
     const taskDetail = task[field] as TaskDetail | undefined
     if (!taskDetail || typeof taskDetail !== "object" || !("status" in taskDetail)) {
       return false
     }
-    return taskDetail.status === "完了" || taskDetail.status === "未手配"
+    return completedStatuses.includes(taskDetail.status as string)
   }).length
 
-  return Math.round((completedCount / taskFields.length) * 100)
+  // The contract itself is a completed step.
+  const contractCompleted = 1
+  const totalSteps = taskFields.length + contractCompleted
+  const completedSteps = completedTasks + contractCompleted
+
+  return Math.floor((completedSteps / totalSteps) * 100)
 }
 
 export function getHandlerColor(handlerName: string): string {

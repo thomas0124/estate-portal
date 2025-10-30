@@ -89,7 +89,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete }: TaskTableProps)
               <TableHead className="text-xs font-bold min-w-[110px]">抵当権抹消</TableHead>
               <TableHead className="text-xs font-bold min-w-[110px]">登記</TableHead>
               <TableHead className="text-xs font-bold min-w-[110px]">後処理</TableHead>
-              <TableHead className="text-xs font-bold min-w-[60px]">アクション</TableHead>
+
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -200,31 +200,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete }: TaskTableProps)
                       field="postProcessing"
                     />
                   </TableCell>
-                  <TableCell className="p-2 bg-amber-50">
-                    {progress === 100 && (
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="destructive" size="icon" className="h-7 w-7">
-                            <Trash className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>タスクを削除しますか？</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              このタスクを削除すると元に戻せません。本当によろしいですか？
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => onTaskDelete(task.id)}>
-                              削除
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    )}
-                  </TableCell>
+
                 </TableRow>
               )
             })}
