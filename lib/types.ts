@@ -18,7 +18,15 @@ export type PropertyStatus = "仲介物件" | "業者物件" | "所有物件" | 
 
 export type PropertyCharacteristic = "相続" | "通常" | "離婚" | "破産" | "その他"
 
-export type TransactionType = "元付(売)自社" | "元付(売)他社" | "客付(買)"
+export type TransactionType = "元付(売)自社" | "元付(売)他社" | "客付(買)" | "両直"
+
+export interface StatusColorConfig {
+  仲介物件: string
+  業者物件: string
+  所有物件: string
+  契約後: string
+  販売中止: string
+}
 
 export interface Property {
   id: string
@@ -42,6 +50,10 @@ export interface Property {
   isOccupied?: boolean // 居住中
   isVacant?: boolean // 空室
   keyPhotoUrl?: string // 鍵の場所の写真URL
+
+  // 売主/買主情報
+  sellerName?: string // 売主名
+  buyerName?: string // 買主名
 
   // 取引業者情報
   vendorCompanyName?: string // 取引業者社名
@@ -93,6 +105,8 @@ export interface PropertyTask {
   settlementDate: Date
   price: number
   estimatedSales: string // 売上見込み (例: "87/87")
+  sellerName?: string // 売主名
+  buyerName?: string // 買主名
 
   reform: TaskDetail // リフォーム
   loanProcedure: TaskDetail<LoanProcedureStatus> // 融資手続き

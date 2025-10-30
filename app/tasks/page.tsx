@@ -14,10 +14,12 @@ import type { PropertyTask } from "@/lib/types"
 import { LogOut, Building2, Filter, ChevronUp, ChevronDown } from "lucide-react"
 import { calculateTaskProgress } from "@/lib/mock-data"
 
+const TAX_RATE = 0.10 // 10% 消費税
+
 export default function TasksPage() {
   const router = useRouter()
   const { user, logout, isLoading } = useAuth()
-  const { tasks, updateTask, handlers } = useData()
+  const { tasks, updateTask, handlers, deleteTask } = useData()
 
   const [showAllHandlers, setShowAllHandlers] = useState(true)
   const [selectedHandlers, setSelectedHandlers] = useState<string[]>([])
@@ -80,7 +82,8 @@ export default function TasksPage() {
       const [sell = 0, buy = 0] = task.estimatedSales.split("/").map(Number)
       return sum + sell + buy
     }, 0)
-    return { count, totalSales }
+    const totalSalesTaxIncluded = totalSales * (1 + TAX_RATE)
+    return { count, totalSales, totalSalesTaxIncluded }
   }, [filteredTasks])
 
   const settlementMonthStats = useMemo(() => {
@@ -223,6 +226,7 @@ export default function TasksPage() {
                 )
               })}
               <Button
+                key="current-month"
                 variant={selectedPeriodIndex === 6 && !showAllSettlementMonths ? "default" : "outline"}
                 size="sm"
                 onClick={() => {
@@ -292,19 +296,15 @@ export default function TasksPage() {
           <div>
             <h1 className="text-xl sm:text-2xl font-bold">契約後タスク管理ボード</h1>
             <p className="text-sm text-muted-foreground mt-1">
-              {statistics.count}件 / 売上見込み合計: ¥{statistics.totalSales.toLocaleString()}
+              {statistics.count}件 / 売上見込み合計: ¥{(statistics.totalSales * 10000).toLocaleString()} (税抜) / ¥{(statistics.totalSalesTaxIncluded * 10000).toLocaleString()} (税込)
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => router.push("/properties")}>
+          <div className="flex items-center gap-2 flex-wrap justify-end flex-grow">
+            <Button variant="outline" size="sm" onClick={() => router.push("/properties")} className="h-16">
               <Building2 className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">契約前物件</span>
             </Button>
-            {user?.role === "admin" && (
-              <Button variant="outline" size="sm" onClick={() => router.push("/admin")}>
-                管理
-              </Button>
-            )}
+
             <Button variant="outline" size="sm" onClick={logout}>
               <LogOut className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">ログアウト</span>
@@ -333,7 +333,7 @@ export default function TasksPage() {
           </Sheet>
         </div>
 
-        <TaskTable tasks={filteredTasks} onTaskUpdate={updateTask} />
+        <TaskTable tasks={filteredTasks} onTaskUpdate={updateTask} onTaskDelete={deleteTask} />
 
         {filteredTasks.length === 0 && (
           <div className="text-center py-12">

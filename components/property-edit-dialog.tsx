@@ -24,21 +24,22 @@ interface PropertyEditDialogProps {
 }
 
 const PROPERTY_TYPES: PropertyType[] = ["戸建て", "マンション", "土地", "その他"]
-const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "契約後", "販売中止"]
-const PROPERTY_CHARACTERISTICS: PropertyCharacteristic[] = ["相続", "通常", "離婚", "破産", "その他"]
-const TRANSACTION_TYPES: TransactionType[] = ["元付(売)自社", "元付(売)他社", "客付(買)"]
+const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "販売中止"]
+const PROPERTY_CHARACTERISTICS: PropertyCharacteristic[] = ["通常", "破産", "離婚", "相続", "その他"]
+const TRANSACTION_TYPES: TransactionType[] = ["元付(売)自社", "元付(売)他社", "客付(買)", "両直"]
 
 const availableTransactionTypes: Record<string, TransactionType[]> = {
-  仲介物件: ["元付(売)自社", "元付(売)他社", "客付(買)"],
-  業者物件: ["元付(売)自社", "客付(買)"],
-  所有物件: ["元付(売)自社"],
-  契約後: ["元付(売)自社"],
-  販売中止: ["元付(売)自社"],
+  仲介物件: ["元付(売)自社", "元付(売)他社", "客付(買)", "両直"],
+  業者物件: ["元付(売)自社", "客付(買)", "両直"],
+  所有物件: ["元付(売)自社", "両直"],
+  販売中止: ["元付(売)自社", "両直"],
 }
 
 export function PropertyEditDialog({ property, open, onOpenChange, onSave }: PropertyEditDialogProps) {
   const [formData, setFormData] = useState<Partial<Property>>({})
   const [priceInput, setPriceInput] = useState<string>("")
+
+  const TAX_RATE = 0.10 // 10% 消費税
 
   useEffect(() => {
     if (property) {
@@ -59,6 +60,8 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
         vendorCompanyName: "ライフリノベーション",
         vendorContactPerson: "",
         vendorPhone: "",
+        sellerName: "", // New field
+        buyerName: "", // New field
         isOccupied: false,
         isVacant: false,
         keyPhotoUrl: undefined,
@@ -105,17 +108,8 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
       return
     }
 
-    if (formData.status === "契約後") {
-      if (!formData.contractDate || !formData.settlementDate) {
-        toast.error("入力エラー", {
-          description: "契約後の場合、契約日と決済日を入力してください",
-        })
-        return
-      }
-    }
-
     if (property) {
-      onSave({ ...property, ...formData, updatedAt: new Date() })
+      onSave({ ...property, ...formData, updatedAt: new Date() } as Property)
     } else {
       onSave({
         ...formData,
@@ -134,6 +128,8 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
   }
 
   const currentTransactionTypes = formData.status ? availableTransactionTypes[formData.status] : TRANSACTION_TYPES
+  const priceExclTax = formData.price || 0
+  const priceInclTax = Math.round(priceExclTax * (1 + TAX_RATE))
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -158,7 +154,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4 items-end">
             <div className="space-y-2">
               <Label htmlFor="status">ステータス</Label>
               <Select
@@ -179,13 +175,22 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="price">価格（万円）</Label>
+              <Label htmlFor="price">価格（万円・税抜）</Label>
               <Input
                 id="price"
                 type="text"
                 value={priceInput}
                 onChange={handlePriceChange}
                 required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>価格（万円・税込）</Label>
+              <Input
+                value={formatPriceInManYen(priceInclTax)}
+                readOnly
+                className="bg-muted"
               />
             </div>
           </div>
@@ -261,6 +266,28 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             </RadioGroup>
           </div>
 
+          {/* 売主/買主の入力欄 */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="sellerName">売主名</Label>
+              <Input
+                id="sellerName"
+                value={formData.sellerName || ""}
+                onChange={(e) => setFormData({ ...formData, sellerName: e.target.value })}
+                maxLength={100}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="buyerName">買主名</Label>
+              <Input
+                id="buyerName"
+                value={formData.buyerName || ""}
+                onChange={(e) => setFormData({ ...formData, buyerName: e.target.value })}
+                maxLength={100}
+              />
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Label>取引業者</Label>
             <div className="grid grid-cols-3 gap-4 p-4 border rounded-md">
@@ -294,29 +321,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             </div>
           </div>
 
-          {formData.isVacant && (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="keyLocation">鍵の場所</Label>
-                <Input
-                  id="keyLocation"
-                  value={formData.keyLocation || ""}
-                  onChange={(e) => setFormData({ ...formData, keyLocation: e.target.value })}
-                  maxLength={100}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="keyInfo">キーボックスの番号</Label>
-                <Input
-                  id="keyInfo"
-                  value={formData.keyInfo || ""}
-                  onChange={(e) => setFormData({ ...formData, keyInfo: e.target.value })}
-                  maxLength={100}
-                />
-              </div>
-            </div>
-          )}
+          {/* 鍵情報は居住中／空室チェックの下に表示するため、表示位置を移動 */}
 
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
@@ -348,6 +353,30 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
               <Label htmlFor="isVacant">空室</Label>
             </div>
           </div>
+
+          {formData.isVacant && (
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="space-y-2">
+                <Label htmlFor="keyLocation">鍵の場所</Label>
+                <Input
+                  id="keyLocation"
+                  value={formData.keyLocation || ""}
+                  onChange={(e) => setFormData({ ...formData, keyLocation: e.target.value })}
+                  maxLength={100}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="keyInfo">キーボックスの番号</Label>
+                <Input
+                  id="keyInfo"
+                  value={formData.keyInfo || ""}
+                  onChange={(e) => setFormData({ ...formData, keyInfo: e.target.value })}
+                  maxLength={100}
+                />
+              </div>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="publicInfo">公開情報</Label>

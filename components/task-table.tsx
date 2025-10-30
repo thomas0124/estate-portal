@@ -4,15 +4,19 @@ import { useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { TaskCellButton } from "@/components/task-cell-button"
 import { TaskEditDialog } from "@/components/task-edit-dialog"
+import { Button } from "@/components/ui/button"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import type { PropertyTask, TaskDetail } from "@/lib/types"
 import { calculateTaskProgress } from "@/lib/mock-data"
+import { Trash } from "lucide-react"
 
 interface TaskTableProps {
   tasks: PropertyTask[]
   onTaskUpdate: (task: PropertyTask) => void
+  onTaskDelete: (taskId: string) => void
 }
 
-export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
+export function TaskTable({ tasks, onTaskUpdate, onTaskDelete }: TaskTableProps) {
   const [selectedTask, setSelectedTask] = useState<PropertyTask | null>(null)
   const [selectedTaskField, setSelectedTaskField] = useState<keyof PropertyTask | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -49,7 +53,7 @@ export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
     return plannedDate < today
   }
 
-  const getDaysUntilSettlement = (settlementDate: Date): { text: string; color: string } => {
+  const getDaysUntilSettlement = (settlementDate: Date): { text: string; color: string; isOverdue: boolean; isSettled: boolean } => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     const settlement = new Date(settlementDate)
@@ -58,11 +62,11 @@ export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
     const diffDays = Math.ceil((settlement.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
 
     if (diffDays < 0) {
-      return { text: `${Math.abs(diffDays)}日超過`, color: "text-red-600 font-semibold" }
-    } else if (diffDays <= 7) {
-      return { text: `あと${diffDays}日`, color: "text-orange-600" }
+      return { text: `${Math.abs(diffDays)}日超過`, color: "text-red-600 font-semibold", isOverdue: true, isSettled: true }
+    } else if (diffDays <= 30) {
+      return { text: `あと${diffDays}日`, color: "text-red-600 font-semibold", isOverdue: false, isSettled: false }
     } else {
-      return { text: `あと${diffDays}日`, color: "text-gray-500" }
+      return { text: `あと${diffDays}日`, color: "text-gray-500", isOverdue: false, isSettled: false }
     }
   }
 
@@ -84,8 +88,8 @@ export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
               <TableHead className="text-xs font-bold min-w-[110px]">解体</TableHead>
               <TableHead className="text-xs font-bold min-w-[110px]">抵当権抹消</TableHead>
               <TableHead className="text-xs font-bold min-w-[110px]">登記</TableHead>
-              <TableHead className="text-xs font-bold min-w-[130px]">決済場所手配</TableHead>
               <TableHead className="text-xs font-bold min-w-[110px]">後処理</TableHead>
+              <TableHead className="text-xs font-bold min-w-[60px]">アクション</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -103,6 +107,13 @@ export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
                       {task.companyName}
                     </div>
                     <div className="text-gray-700 text-xs">{task.handlerName}</div>
+                    {(task.sellerName || task.buyerName) && (
+                      <div className="text-[9px] text-muted-foreground/70">
+                        {task.sellerName && `売主: ${task.sellerName}`}
+                        {task.sellerName && task.buyerName && " / "}
+                        {task.buyerName && `買主: ${task.buyerName}`}
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell className="p-2 text-xs text-gray-600 bg-amber-50">
                     {task.contractDate.toLocaleDateString("ja-JP")}
@@ -122,16 +133,23 @@ export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
                     </div>
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
-                    <div className="font-bold text-blue-700 text-xs">
-                      {task.settlementDate.toLocaleDateString("ja-JP")}
-                    </div>
-                    <div className={`text-xs ${daysInfo.color}`}>{daysInfo.text}</div>
+                    {daysInfo.isSettled ? (
+                      <div className="font-bold text-green-700 text-xs">決済済</div>
+                    ) : (
+                      <>
+                        <div className="font-bold text-blue-700 text-xs">
+                          {task.settlementDate.toLocaleDateString("ja-JP")}
+                        </div>
+                        <div className={`text-xs ${daysInfo.color}`}>{daysInfo.text}</div>
+                      </>
+                    )}
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
                     <TaskCellButton
                       taskDetail={getTaskDetail(task, "reform")}
                       isOverdue={isOverdue(task, "reform")}
                       onClick={() => handleTaskCellClick(task, "reform")}
+                      field="reform"
                     />
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
@@ -139,6 +157,7 @@ export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
                       taskDetail={getTaskDetail(task, "loanProcedure")}
                       isOverdue={isOverdue(task, "loanProcedure")}
                       onClick={() => handleTaskCellClick(task, "loanProcedure")}
+                      field="loanProcedure"
                     />
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
@@ -146,6 +165,7 @@ export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
                       taskDetail={getTaskDetail(task, "survey")}
                       isOverdue={isOverdue(task, "survey")}
                       onClick={() => handleTaskCellClick(task, "survey")}
+                      field="survey"
                     />
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
@@ -153,6 +173,7 @@ export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
                       taskDetail={getTaskDetail(task, "demolition")}
                       isOverdue={isOverdue(task, "demolition")}
                       onClick={() => handleTaskCellClick(task, "demolition")}
+                      field="demolition"
                     />
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
@@ -160,6 +181,7 @@ export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
                       taskDetail={getTaskDetail(task, "mortgageCancellation")}
                       isOverdue={isOverdue(task, "mortgageCancellation")}
                       onClick={() => handleTaskCellClick(task, "mortgageCancellation")}
+                      field="mortgageCancellation"
                     />
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
@@ -167,13 +189,7 @@ export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
                       taskDetail={getTaskDetail(task, "registration")}
                       isOverdue={isOverdue(task, "registration")}
                       onClick={() => handleTaskCellClick(task, "registration")}
-                    />
-                  </TableCell>
-                  <TableCell className="p-2 bg-amber-50">
-                    <TaskCellButton
-                      taskDetail={getTaskDetail(task, "venueArrangement")}
-                      isOverdue={isOverdue(task, "venueArrangement")}
-                      onClick={() => handleTaskCellClick(task, "venueArrangement")}
+                      field="registration"
                     />
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
@@ -181,7 +197,33 @@ export function TaskTable({ tasks, onTaskUpdate }: TaskTableProps) {
                       taskDetail={getTaskDetail(task, "postProcessing")}
                       isOverdue={isOverdue(task, "postProcessing")}
                       onClick={() => handleTaskCellClick(task, "postProcessing")}
+                      field="postProcessing"
                     />
+                  </TableCell>
+                  <TableCell className="p-2 bg-amber-50">
+                    {progress === 100 && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive" size="icon" className="h-7 w-7">
+                            <Trash className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>タスクを削除しますか？</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              このタスクを削除すると元に戻せません。本当によろしいですか？
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => onTaskDelete(task.id)}>
+                              削除
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
                   </TableCell>
                 </TableRow>
               )

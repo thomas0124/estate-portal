@@ -48,11 +48,4 @@ export function shiftMonthlyPeriods(periods: Period[], direction: "up" | "down")
   })
 }
 
-// 後方互換性のため残す
-export function getCurrentPeriods(): Period[] {
-  return getMonthlyPeriods()
-}
 
-export function shiftPeriods(periods: Period[], direction: "up" | "down"): Period[] {
-  return shiftMonthlyPeriods(periods, direction)
-}

@@ -41,6 +41,14 @@ export default function PropertiesPage() {
 
   const availableHandlers = useMemo(() => getUniqueHandlers(properties), [properties])
 
+  const handlerPropertyCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    properties.forEach(property => {
+      counts[property.handlerName] = (counts[property.handlerName] || 0) + 1
+    })
+    return counts
+  }, [properties])
+
   const filteredCount = useMemo(() => {
     let filtered = properties
 
@@ -116,6 +124,7 @@ export default function PropertiesPage() {
           <p className="text-xs text-muted-foreground">{user?.name}</p>
         </div>
         <PropertyFilters
+          properties={properties}
           selectedTypes={selectedTypes}
           selectedStatuses={selectedStatuses}
           selectedCharacteristics={selectedCharacteristics}
@@ -124,35 +133,38 @@ export default function PropertiesPage() {
           onCharacteristicChange={setSelectedCharacteristics}
           onReset={resetFilters}
         />
+        <div className="mt-6">
+          <Button variant="outline" size="sm" onClick={logout} className="w-full">
+            <LogOut className="h-4 w-4 mr-2" />
+            ログアウト
+          </Button>
+        </div>
       </aside>
 
       <main className="flex-1 overflow-y-auto">
         <div className="container max-w-7xl mx-auto p-3 sm:p-4 md:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2 sm:mb-3">
             <div>
               <h1 className="text-xl sm:text-2xl font-bold">契約前物件</h1>
               <p className="text-sm text-muted-foreground mt-1">{filteredCount}件の物件</p>
             </div>
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap justify-end flex-grow">
+              <Button variant="outline" size="sm" onClick={() => router.push("/tasks")} className="h-16">
+                <ClipboardList className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">契約後タスク</span>
+              </Button>
               {isAdmin && (
                 <Button variant="outline" size="sm" onClick={() => router.push("/admin")} className="hidden sm:flex">
                   <Settings className="h-4 w-4 sm:mr-2" />
                   <span className="hidden sm:inline">管理者設定</span>
                 </Button>
               )}
-              <Button variant="outline" size="sm" onClick={() => router.push("/tasks")}>
-                <ClipboardList className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">契約後タスク</span>
-              </Button>
-              <Button variant="outline" size="sm" onClick={logout}>
-                <LogOut className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">ログアウト</span>
-              </Button>
+
             </div>
           </div>
 
           {/* 担当者絞り込みを画面上部に移動 */}
-          <div className="bg-card rounded-lg border p-4 mb-4">
+          <div className="bg-card rounded-lg border p-4 mb-2">
             <h3 className="font-semibold mb-3">担当者</h3>
             <div className="flex flex-wrap gap-2">
               {availableHandlers.map((handler) => (
@@ -163,7 +175,7 @@ export default function PropertiesPage() {
                     onCheckedChange={() => toggleHandler(handler)}
                   />
                   <Label htmlFor={`handler-${handler}`} className="text-sm font-normal cursor-pointer">
-                    {handler}
+                    {handler} ({handlerPropertyCounts[handler] || 0}件)
                   </Label>
                 </div>
               ))}
@@ -182,6 +194,7 @@ export default function PropertiesPage() {
                 <SheetTitle className="text-lg font-bold mb-1">物件管理</SheetTitle>
                 <p className="text-xs text-muted-foreground mb-6">{user?.name}</p>
                 <PropertyFilters
+                  properties={properties}
                   selectedTypes={selectedTypes}
                   selectedStatuses={selectedStatuses}
                   selectedCharacteristics={selectedCharacteristics}

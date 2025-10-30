@@ -8,13 +8,14 @@ interface TaskCellButtonProps {
   taskDetail: TaskDetail
   isOverdue: boolean
   onClick: () => void
+  field?: string
 }
 
+// '不要' を完了と同じ緑のチェックにする
 const statusConfig: Record<TaskStatus, { icon: React.ElementType; color: string; label: string }> = {
+  不要: { icon: Check, color: "bg-green-200 text-green-800", label: "不要" },
   未手配: { icon: Minus, color: "bg-slate-200 text-slate-600", label: "未手配" },
-  未着手: { icon: AlertCircle, color: "bg-red-100 text-red-800", label: "未着手" },
   手配中: { icon: Clock, color: "bg-blue-100 text-blue-800", label: "手配中" },
-  進行中: { icon: Play, color: "bg-yellow-200 text-yellow-800", label: "進行中" },
   完了: { icon: Check, color: "bg-green-200 text-green-800", label: "完了" },
 }
 
@@ -23,7 +24,7 @@ const loanProcedureStatusConfig: Record<
   { icon: React.ElementType; color: string; label: string }
 > = {
   未手配: { icon: Minus, color: "bg-slate-200 text-slate-600", label: "未手配" },
-  本申込済: { icon: Play, color: "bg-yellow-200 text-yellow-800", label: "本申込済" },
+  本申込: { icon: Play, color: "bg-yellow-200 text-yellow-800", label: "本申込" },
   金商契約済: { icon: Check, color: "bg-green-200 text-green-800", label: "金商契約済" },
 }
 
@@ -38,12 +39,16 @@ const registrationStatusConfig: Record<
 
 const allStatusConfigs = { ...statusConfig, ...loanProcedureStatusConfig, ...registrationStatusConfig }
 
-export function TaskCellButton({ taskDetail, isOverdue, onClick }: TaskCellButtonProps) {
+export function TaskCellButton({ taskDetail, isOverdue, onClick, field }: TaskCellButtonProps) {
   const config = allStatusConfigs[taskDetail.status as keyof typeof allStatusConfigs]
   if (!config) return null // 安全対策
   const Icon = config.icon
 
-  const isUntouched = taskDetail.status === "未着手"
+  const isUntouched = taskDetail.status === "未手配"
+
+  // ヘルパー: 日付フォーマット
+  const formatMD = (d?: Date | string) =>
+    d ? new Date(d).toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" }) : ""
 
   return (
     <button
@@ -61,30 +66,67 @@ export function TaskCellButton({ taskDetail, isOverdue, onClick }: TaskCellButto
         {config.label}
       </Badge>
       <div className="space-y-0.5 text-xs">
-        {taskDetail.companyName && (
-          <div className="truncate text-gray-700" title={taskDetail.companyName}>
-            {taskDetail.companyName}
+        {/* 抵当権抹消は金融機関名を優先表示 */}
+        {field === "mortgageCancellation" && taskDetail.bank ? (
+          <div className="truncate text-gray-700" title={taskDetail.bank}>
+            {taskDetail.bank}
           </div>
+        ) : (
+          taskDetail.companyName && (
+            <div className="truncate text-gray-700" title={taskDetail.companyName}>
+              {taskDetail.companyName}
+            </div>
+          )
         )}
-        {taskDetail.bank && (
+
+        {/* 抵当権抹消で会社名が不要な場合、bank のみ表示される。その他は bank を補助表示 */}
+        {field !== "mortgageCancellation" && taskDetail.bank && (
           <div className="truncate text-gray-700" title={taskDetail.bank}>
             {taskDetail.bank}
           </div>
         )}
-        {taskDetail.judicialScrivener && (
-          <div className="truncate text-gray-700" title={taskDetail.judicialScrivener}>
-            {taskDetail.judicialScrivener}
+
+        {/* 登記（司法書士）は事務所(左70%) と担当者(右30%) を表示 */}
+        {field === "registration" && (taskDetail.judicialScrivener || taskDetail.contactPerson) ? (
+          <div className="flex items-center gap-2">
+            <div className="truncate text-gray-700" style={{ flex: "0 0 70%" }} title={taskDetail.judicialScrivener}>
+              {taskDetail.judicialScrivener}
+            </div>
+            {taskDetail.contactPerson && (
+              <div className="truncate text-gray-700 text-right" style={{ flex: "0 0 30%" }} title={taskDetail.contactPerson}>
+                {taskDetail.contactPerson}
+              </div>
+            )}
           </div>
+        ) : (
+          // 既存の司法書士表示（registration 以外も同じレイアウトで表示）
+          taskDetail.judicialScrivener && (
+            <div className="flex items-center gap-2 w-full">
+              <div className="truncate text-gray-700 w-[70%]" title={taskDetail.judicialScrivener}>
+                {taskDetail.judicialScrivener}
+              </div>
+              {taskDetail.contactPerson && (
+                <div className="truncate text-gray-700 text-right w-[30%]" title={taskDetail.contactPerson}>
+                  {taskDetail.contactPerson}
+                </div>
+              )}
+            </div>
+          )
         )}
-        {taskDetail.plannedDate && (
+
+        {/* plannedDate のラベルはリフォームの場合に "完工予定" とする。融資手続きは "本申込日" とする。後処理は予定日非表示。*/}
+        {taskDetail.plannedDate && field !== "postProcessing" && (
           <div className="text-gray-500">
-            予定: {new Date(taskDetail.plannedDate).toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" })}
+            {field === "reform" ? "完工予定: " : field === "loanProcedure" ? "本申込日: " : "予定: "}
+            {formatMD(taskDetail.plannedDate)}
           </div>
         )}
+
+        {/* completionDate のラベルは解体で特別表示 */}
         {taskDetail.completionDate && (
           <div className="text-green-600">
-            完了:{" "}
-            {new Date(taskDetail.completionDate).toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" })}
+            {field === "demolition" ? "完了日（滅失登記含む）: " : "完了: "}
+            {formatMD(taskDetail.completionDate)}
           </div>
         )}
       </div>

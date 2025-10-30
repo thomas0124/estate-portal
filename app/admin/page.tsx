@@ -20,6 +20,8 @@ export default function AdminPage() {
   const {
     handlers,
     buildingTypes,
+    ownedPropertyColor: contextOwnedPropertyColor,
+    updateOwnedPropertyColor,
     addHandler,
     updateHandler,
     deleteHandler,
@@ -39,11 +41,22 @@ export default function AdminPage() {
   const [buildingTypeName, setBuildingTypeName] = useState("")
   const [buildingTypeIcon, setBuildingTypeIcon] = useState("🏠")
 
+  const [ownedPropertyColor, setOwnedPropertyColor] = useState(contextOwnedPropertyColor)
+
+  useEffect(() => {
+    setOwnedPropertyColor(contextOwnedPropertyColor)
+  }, [contextOwnedPropertyColor])
+
   useEffect(() => {
     if (!isLoading && (!user || !isAdmin)) {
       router.push("/properties")
     }
   }, [user, isAdmin, isLoading, router])
+
+  const handleSaveOwnedPropertyColor = () => {
+    updateOwnedPropertyColor(ownedPropertyColor)
+    toast.success("所有物件の色を保存しました")
+  }
 
   const handleSaveHandler = () => {
     if (!handlerName.trim()) {
@@ -315,6 +328,34 @@ export default function AdminPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>所有物件色管理</CardTitle>
+              <CardDescription>所有物件カードの背景色と枠線の色を管理します。</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Label>カラーコード</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="color"
+                    value={ownedPropertyColor}
+                    onChange={(e) => setOwnedPropertyColor(e.target.value)}
+                    className="w-20 h-10"
+                  />
+                  <Input
+                    value={ownedPropertyColor}
+                    onChange={(e) => setOwnedPropertyColor(e.target.value)}
+                    placeholder="#fed7aa"
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <Button onClick={handleSaveOwnedPropertyColor}>保存</Button>
+                </div>
               </div>
             </CardContent>
           </Card>

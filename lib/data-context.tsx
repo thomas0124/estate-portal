@@ -2,7 +2,8 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from "react"
 import type { Property, PropertyTask, Handler, BuildingType } from "./types"
-import { MOCK_PROPERTIES, MOCK_TASKS, MOCK_HANDLERS, MOCK_BUILDING_TYPES, getHandlerColor } from "./mock-data"
+import { MOCK_PROPERTIES, MOCK_TASKS, MOCK_HANDLERS, MOCK_BUILDING_TYPES, getHandlerColor, calculateTaskProgress } from "./mock-data"
+import { toast } from "sonner"
 
 interface DataContextType {
   properties: Property[]
@@ -13,12 +14,15 @@ interface DataContextType {
   addProperty: (property: Property) => void
   deleteProperty: (propertyId: string) => void
   updateTask: (task: PropertyTask) => void
+  deleteTask: (taskId: string) => void // New: Delete task function
   addHandler: (handler: Handler) => void
   updateHandler: (handler: Handler) => void
   deleteHandler: (handlerId: string) => void
   addBuildingType: (buildingType: BuildingType) => void
   updateBuildingType: (buildingType: BuildingType) => void
   deleteBuildingType: (buildingTypeId: string) => void
+  ownedPropertyColor: string
+  updateOwnedPropertyColor: (color: string) => void
   syncPropertyToTask: (propertyId: string) => void
 }
 
@@ -29,6 +33,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [tasks, setTasks] = useState<PropertyTask[]>([])
   const [handlers, setHandlers] = useState<Handler[]>([])
   const [buildingTypes, setBuildingTypes] = useState<BuildingType[]>([])
+  const [ownedPropertyColor, setOwnedPropertyColor] = useState<string>("#fed7aa") // Default color
 
   // 初期データの読み込み
   useEffect(() => {
@@ -36,6 +41,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const storedTasks = localStorage.getItem("tasks")
     const storedHandlers = localStorage.getItem("handlers")
     const storedBuildingTypes = localStorage.getItem("buildingTypes")
+    const storedOwnedPropertyColor = localStorage.getItem("ownedPropertyColor")
 
     if (storedProperties) {
       setProperties(
@@ -88,6 +94,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
     } else {
       setBuildingTypes(MOCK_BUILDING_TYPES)
     }
+
+    if (storedOwnedPropertyColor) {
+      setOwnedPropertyColor(JSON.parse(storedOwnedPropertyColor))
+    }
   }, [])
 
   // データの永続化
@@ -114,6 +124,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("buildingTypes", JSON.stringify(buildingTypes))
     }
   }, [buildingTypes])
+
+  useEffect(() => {
+    localStorage.setItem("ownedPropertyColor", JSON.stringify(ownedPropertyColor))
+  }, [ownedPropertyColor])
 
   const syncPropertyToTask = useCallback(
     (propertyId: string) => {
@@ -209,6 +223,26 @@ export function DataProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
+  const deleteTask = useCallback(
+    (taskId: string) => {
+      setTasks((prev) => {
+        const taskToDelete = prev.find((task) => task.id === taskId)
+        if (taskToDelete) {
+          const progress = calculateTaskProgress(taskToDelete)
+          if (progress === 100) {
+            toast.success("タスクを削除しました", { description: `タスク ${taskToDelete.propertyName} を削除しました。` });
+            return prev.filter((task) => task.id !== taskId)
+          } else {
+            toast.error("削除できません", { description: "タスクの進捗が100%でないため削除できません。" });
+            return prev;
+          }
+        }
+        return prev;
+      })
+    },
+    [],
+  )
+
   const addHandler = useCallback((handler: Handler) => {
     setHandlers((prev) => [...prev, handler])
   }, [])
@@ -249,6 +283,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setBuildingTypes((prev) => prev.filter((bt) => bt.id !== buildingTypeId))
   }, [])
 
+  const updateOwnedPropertyColor = useCallback((color: string) => {
+    setOwnedPropertyColor(color)
+  }, [])
+
   return (
     <DataContext.Provider
       value={{
@@ -256,16 +294,19 @@ export function DataProvider({ children }: { children: ReactNode }) {
         tasks,
         handlers,
         buildingTypes,
+        ownedPropertyColor,
         updateProperty,
         addProperty,
         deleteProperty,
         updateTask,
+        deleteTask, // New: Expose deleteTask
         addHandler,
         updateHandler,
         deleteHandler,
         addBuildingType,
         updateBuildingType,
         deleteBuildingType,
+        updateOwnedPropertyColor,
         syncPropertyToTask,
       }}
     >
