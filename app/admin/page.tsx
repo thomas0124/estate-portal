@@ -200,7 +200,7 @@ export default function AdminPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>カラーコード</Label>
+                        <Label>色の編集</Label>
                         <div className="flex gap-2">
                           <Input
                             type="color"
@@ -237,7 +237,7 @@ export default function AdminPage() {
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full" style={{ backgroundColor: handler.color }} />
                       <span className="font-medium">{handler.name}</span>
-                      <span className="text-sm text-muted-foreground">{handler.color}</span>
+                      
                     </div>
                     <div className="flex gap-2">
                       <Button variant="ghost" size="icon" onClick={() => handleEditHandler(handler)}>
@@ -339,7 +339,7 @@ export default function AdminPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <Label>カラーコード</Label>
+                <Label>色の編集</Label>
                 <div className="flex gap-2">
                   <Input
                     type="color"

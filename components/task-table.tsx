@@ -14,9 +14,10 @@ interface TaskTableProps {
   tasks: PropertyTask[]
   onTaskUpdate: (task: PropertyTask) => void
   onTaskDelete: (taskId: string) => void
+  isAdmin: boolean
 }
 
-export function TaskTable({ tasks, onTaskUpdate, onTaskDelete }: TaskTableProps) {
+export function TaskTable({ tasks, onTaskUpdate, onTaskDelete, isAdmin }: TaskTableProps) {
   const [selectedTask, setSelectedTask] = useState<PropertyTask | null>(null)
   const [selectedTaskField, setSelectedTaskField] = useState<keyof PropertyTask | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -103,17 +104,49 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete }: TaskTableProps)
                     className="sticky left-0 z-10 p-2 whitespace-nowrap"
                     style={{ backgroundColor: task.handlerColor }}
                   >
-                    <div className="font-medium text-gray-900 text-xs truncate max-w-[130px]" title={task.companyName}>
-                      {task.companyName}
-                    </div>
-                    <div className="text-gray-700 text-xs">{task.handlerName}</div>
-                    {(task.sellerName || task.buyerName) && (
-                      <div className="text-[9px] text-muted-foreground/70">
-                        {task.sellerName && `売主: ${task.sellerName}`}
-                        {task.sellerName && task.buyerName && " / "}
-                        {task.buyerName && `買主: ${task.buyerName}`}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-gray-900 text-xs truncate max-w-[130px]" title={task.companyName}>
+                          {task.companyName}
+                        </div>
+                        <div className="text-gray-700 text-xs">{task.handlerName}</div>
+                        {(task.sellerName || task.buyerName) && (
+                          <div className="text-[9px] text-muted-foreground/70">
+                            {task.sellerName && `売主: ${task.sellerName}`}
+                            {task.sellerName && task.buyerName && " / "}
+                            {task.buyerName && `買主: ${task.buyerName}`}
+                          </div>
+                        )}
                       </div>
-                    )}
+                      {isAdmin && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              disabled={progress !== 100}
+                              className="shrink-0"
+                            >
+                              <Trash className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>タスクの削除</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                本当にこのタスクを削除しますか？この操作は元に戻せません。
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => onTaskDelete(task.id)}>
+                                削除
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="p-2 text-xs text-gray-600 bg-amber-50">
                     {task.contractDate.toLocaleDateString("ja-JP")}

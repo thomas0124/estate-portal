@@ -1,63 +1,38 @@
-'use client'
+"use client"
 
-import { Badge } from "@/components/ui/badge"
 import type { Property } from "@/lib/types"
+import Image from "next/image"
 import { formatPriceInManYen } from "@/lib/utils"
-import { DEFAULT_STATUS_COLORS as statusColors } from "@/lib/config"
+import { Separator } from "@/components/ui/separator"
 
 interface PropertyHoverContentProps {
   property: Property
 }
 
 export function PropertyHoverContent({ property }: PropertyHoverContentProps) {
-
   return (
-    <div className="space-y-3 p-2">
-      <h3 className="font-semibold text-base">{property.propertyName}</h3>
-      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-        <div>
-          <span className="text-muted-foreground text-xs">物件番号</span>
-          <p className="font-mono">No.{property.propertyNumber}</p>
-        </div>
-        {property.roomNumber && (
-          <div>
-            <span className="text-muted-foreground text-xs">部屋番号</span>
-            <p>{property.roomNumber}</p>
-          </div>
-        )}
+    <div className="space-y-2 text-sm">
+      <h3 className="font-bold text-base">{property.propertyName}</h3>
+      <Separator />
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1">
         <div>
           <span className="text-muted-foreground text-xs">価格</span>
-          <p className="font-semibold">{formatPriceInManYen(property.price)}</p>
-        </div>
-        <div>
-          <span className="text-muted-foreground text-xs">ステータス</span>
-          <p>
-            <Badge variant="outline" className={statusColors[property.status]}>
-              {property.status}
-            </Badge>
+          <p className="font-semibold">
+            {property.priceInclTax ? formatPriceInManYen(property.priceInclTax) : formatPriceInManYen(property.price)}
           </p>
         </div>
         <div>
-          <span className="text-muted-foreground text-xs">種別</span>
-          <div className="flex items-center gap-2">
-            <p>{property.propertyType}</p>
-            {property.characteristic && <Badge variant="secondary">{property.characteristic}</Badge>}
-          </div>
+          <span className="text-muted-foreground text-xs">取引態様</span>
+          <p>{property.status}</p>
         </div>
         <div>
           <span className="text-muted-foreground text-xs">社名</span>
           <p>{property.companyName}</p>
         </div>
         <div>
-          <span className="text-muted-foreground text-xs">担当者</span>
+          <span className="text-muted-foreground text-xs">担当者名</span>
           <p>{property.handlerName}</p>
         </div>
-        {property.responsiblePerson && (
-          <div>
-            <span className="text-muted-foreground text-xs">責任者</span>
-            <p>{property.responsiblePerson}</p>
-          </div>
-        )}
         {property.infoSource && (
           <div>
             <span className="text-muted-foreground text-xs">情報元</span>
@@ -70,89 +45,78 @@ export function PropertyHoverContent({ property }: PropertyHoverContentProps) {
             <p>{property.transactionType}</p>
           </div>
         )}
-        {(property.sellerName || property.buyerName) && (
+        {property.responsiblePerson && (
           <div>
-            <span className="text-muted-foreground text-xs">売主/買主</span>
-            <p>
-              {property.sellerName && `売主: ${property.sellerName}`}
-              {property.sellerName && property.buyerName && " / "}
-              {property.buyerName && `買主: ${property.buyerName}`}
-            </p>
+            <span className="text-muted-foreground text-xs">責任者</span>
+            <p>{property.responsiblePerson}</p>
           </div>
         )}
-        {property.isOccupied !== undefined && (
+        {property.characteristic && (
+          <div>
+            <span className="text-muted-foreground text-xs">売却理由</span>
+            <p>{property.characteristic}</p>
+          </div>
+        )}
+        {(property.isOccupied || property.isVacant) && (
           <div>
             <span className="text-muted-foreground text-xs">居住状況</span>
-            <p>{property.isOccupied ? "居住中" : "空室"}</p>
-          </div>
-        )}
-        {property.isVacant !== undefined && (
-          <div>
-            <span className="text-muted-foreground text-xs">空室状況</span>
-            <p>{property.isVacant ? "空室" : "居住中"}</p>
-          </div>
-        )}
-        {property.contractDate && (
-          <div>
-            <span className="text-muted-foreground text-xs">契約日</span>
-            <p>{property.contractDate.toLocaleDateString("ja-JP")}</p>
-          </div>
-        )}
-        {property.settlementDate && (
-          <div>
-            <span className="text-muted-foreground text-xs">決済日</span>
-            <p>{property.settlementDate.toLocaleDateString("ja-JP")}</p>
-          </div>
-        )}
-        {property.vendorCompanyName && (
-          <div className="col-span-2">
-            <span className="text-muted-foreground text-xs">取引業者</span>
             <p>
-              {property.vendorCompanyName} {property.vendorContactPerson} {property.vendorPhone}
+              {property.isOccupied && "居住中"}
+              {property.isVacant && "空室"}
             </p>
           </div>
         )}
-        {(property.creditorCompanyName || property.creditorContactPerson || property.creditorPhone) && (
-          <div className="col-span-2">
-            <span className="text-muted-foreground text-xs">債権者情報</span>
-            <p>
-              {property.creditorCompanyName && `社名: ${property.creditorCompanyName}`}
-              {property.creditorContactPerson && ` 担当: ${property.creditorContactPerson}`}
-              {property.creditorPhone && ` 電話: ${property.creditorPhone}`}
-            </p>
-          </div>
-        )}
-        {property.keyLocation && (
-          <div className="col-span-2">
-            <span className="text-muted-foreground text-xs">鍵の場所</span>
-            <p>{property.keyLocation}</p>
-          </div>
-        )}
-        {property.keyInfo && (
-          <div className="col-span-2">
-            <span className="text-muted-foreground text-xs">キーボックスの番号</span>
-            <p className="whitespace-pre-wrap">{property.keyInfo}</p>
-          </div>
-        )}
-        {property.publicInfo && (
-          <div className="col-span-2">
-            <span className="text-muted-foreground text-xs">公開情報</span>
-            <p className="whitespace-pre-wrap">{property.publicInfo}</p>
-          </div>
-        )}
-        {property.memo && (
-          <div className="col-span-2">
-            <span className="text-muted-foreground text-xs">メモ</span>
-            <p className="whitespace-pre-wrap">{property.memo}</p>
-          </div>
-        )}
-        {property.keyPhotoUrl && (
-          <div className="col-span-2">
-            <span className="text-muted-foreground text-xs">鍵の場所の写真</span>
-            <img src={property.keyPhotoUrl} alt="Key Location" className="mt-1 max-w-full h-auto rounded-md" />
+        {(property.sellerName || property.buyerName) && (
+          <div className="col-span-2 grid grid-cols-2 gap-x-4">
+            {property.sellerName && (
+              <div>
+                <span className="text-muted-foreground text-xs">売主</span>
+                <p>{property.sellerName}</p>
+              </div>
+            )}
+            {property.buyerName && (
+              <div>
+                <span className="text-muted-foreground text-xs">買主</span>
+                <p>{property.buyerName}</p>
+              </div>
+            )}
           </div>
         )}
       </div>
+      {property.keyPhotoUrl && (
+        <>
+          <Separator />
+          <div>
+            <span className="text-muted-foreground text-xs">鍵の場所</span>
+            <div className="mt-1 relative h-32 w-full">
+              <Image
+                src={property.keyPhotoUrl}
+                alt="鍵の場所の写真"
+                fill
+                className="object-contain rounded-md"
+              />
+            </div>
+          </div>
+        </>
+      )}
+      {property.publicInfo && (
+        <>
+          <Separator />
+          <div>
+            <span className="text-muted-foreground text-xs">公開情報</span>
+            <p className="whitespace-pre-wrap">{property.publicInfo}</p>
+          </div>
+        </>
+      )}
+      {property.memo && (
+        <>
+          <Separator />
+          <div>
+            <span className="text-muted-foreground text-xs">メモ</span>
+            <p className="whitespace-pre-wrap">{property.memo}</p>
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -122,13 +122,23 @@ export function TaskEditDialog({ task, taskField, open, onOpenChange, onSave }: 
           </div>
 
           {(taskField === "reform" || taskField === "survey" || taskField === "demolition") && (
-            <div className="space-y-2">
-              <Label>業者名</Label>
-              <Input
-                value={taskDetail.companyName || ""}
-                onChange={(e) => setTaskDetail({ ...taskDetail, companyName: e.target.value })}
-                placeholder="業者名を入力"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>業者名</Label>
+                <Input
+                  value={taskDetail.companyName || ""}
+                  onChange={(e) => setTaskDetail({ ...taskDetail, companyName: e.target.value })}
+                  placeholder="業者名を入力"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>担当者名</Label>
+                <Input
+                  value={taskDetail.contactPerson || ""}
+                  onChange={(e) => setTaskDetail({ ...taskDetail, contactPerson: e.target.value })}
+                  placeholder="担当者名を入力"
+                />
+              </div>
             </div>
           )}
 

@@ -18,7 +18,7 @@ const TAX_RATE = 0.10 // 10% 消費税
 
 export default function TasksPage() {
   const router = useRouter()
-  const { user, logout, isLoading } = useAuth()
+  const { user, logout, isLoading, isAdmin } = useAuth()
   const { tasks, updateTask, handlers, deleteTask } = useData()
 
   const [showAllHandlers, setShowAllHandlers] = useState(true)
@@ -33,6 +33,22 @@ export default function TasksPage() {
       router.push("/login")
     }
   }, [user, isLoading, router])
+
+  useEffect(() => {
+    const newlyAddedTaskSettlementDate = localStorage.getItem("newlyAddedTaskSettlementDate")
+    if (newlyAddedTaskSettlementDate) {
+      const settlementDate = new Date(newlyAddedTaskSettlementDate)
+      const newPeriodIndex = periods.findIndex(
+        (p) => settlementDate >= p.start && settlementDate <= p.end,
+      )
+
+      if (newPeriodIndex !== -1) {
+        setSelectedPeriodIndex(newPeriodIndex)
+        setShowAllSettlementMonths(false)
+      }
+      localStorage.removeItem("newlyAddedTaskSettlementDate")
+    }
+  }, [periods])
 
   const toggleHandler = (handlerName: string) => {
     if (selectedHandlers.includes(handlerName)) {
@@ -333,7 +349,7 @@ export default function TasksPage() {
           </Sheet>
         </div>
 
-        <TaskTable tasks={filteredTasks} onTaskUpdate={updateTask} onTaskDelete={deleteTask} />
+        <TaskTable tasks={filteredTasks} onTaskUpdate={updateTask} onTaskDelete={deleteTask} isAdmin={isAdmin} />
 
         {filteredTasks.length === 0 && (
           <div className="text-center py-12">

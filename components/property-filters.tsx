@@ -19,7 +19,7 @@ interface PropertyFiltersProps {
 
 const PROPERTY_TYPES: PropertyType[] = ["戸建て", "マンション", "土地", "その他"]
 const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "販売中止"]
-const ALL_CHARACTERISTICS: PropertyCharacteristic[] = ["相続", "通常", "離婚", "破産", "その他"]
+const ALL_CHARACTERISTICS: PropertyCharacteristic[] = ["通常", "破産", "離婚", "相続", "その他"]
 
 export function PropertyFilters({
   properties = [], // Default to empty array
@@ -79,36 +79,22 @@ export function PropertyFilters({
           ))}
           <Separator className="my-2" />
           <div className="flex flex-col space-y-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="type-select-all"
-                checked={selectedTypes.length === PROPERTY_TYPES.length}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    onTypeChange(PROPERTY_TYPES)
-                  } else {
-                    onTypeChange([])
-                  }
-                }}
-              />
-              <Label htmlFor="type-select-all" className="text-sm font-normal cursor-pointer">
-                全選択
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="type-clear-all"
-                checked={selectedTypes.length === 0}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    onTypeChange([])
-                  }
-                }}
-              />
-              <Label htmlFor="type-clear-all" className="text-sm font-normal cursor-pointer">
-                全クリア
-              </Label>
-            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onTypeChange(PROPERTY_TYPES)}
+              className="w-full justify-center"
+            >
+              全選択
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onTypeChange([])}
+              className="w-full justify-center"
+            >
+              全クリア
+            </Button>
           </div>
         </div>
       </div>
@@ -116,7 +102,7 @@ export function PropertyFilters({
       <Separator />
 
       <div>
-        <h3 className="font-semibold mb-3">ステータス</h3>
+        <h3 className="font-semibold mb-3">取引態様</h3>
         <div className="space-y-2">
           {PROPERTY_STATUSES.map((status) => (
             <div key={status} className="flex items-center space-x-2">
@@ -132,36 +118,22 @@ export function PropertyFilters({
           ))}
           <Separator className="my-2" />
           <div className="flex flex-col space-y-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="status-select-all"
-                checked={selectedStatuses.length === PROPERTY_STATUSES.length}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    onStatusChange(PROPERTY_STATUSES)
-                  } else {
-                    onStatusChange([])
-                  }
-                }}
-              />
-              <Label htmlFor="status-select-all" className="text-sm font-normal cursor-pointer">
-                全選択
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="status-clear-all"
-                checked={selectedStatuses.length === 0}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    onStatusChange([])
-                  }
-                }}
-              />
-              <Label htmlFor="status-clear-all" className="text-sm font-normal cursor-pointer">
-                全クリア
-              </Label>
-            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onStatusChange(PROPERTY_STATUSES)}
+              className="w-full justify-center"
+            >
+              全選択
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onStatusChange([])}
+              className="w-full justify-center"
+            >
+              全クリア
+            </Button>
           </div>
         </div>
       </div>
@@ -169,7 +141,7 @@ export function PropertyFilters({
       <Separator />
 
       <div>
-        <h3 className="font-semibold mb-3">案件特性</h3>
+        <h3 className="font-semibold mb-3">売却理由</h3>
         <div className="space-y-2">
           {ALL_CHARACTERISTICS.map((characteristic) => (
             <div key={characteristic} className="flex items-center space-x-2">
@@ -185,36 +157,22 @@ export function PropertyFilters({
           ))}
           <Separator className="my-2" />
           <div className="flex flex-col space-y-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="characteristic-select-all"
-                checked={selectedCharacteristics.length === ALL_CHARACTERISTICS.length}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    onCharacteristicChange(ALL_CHARACTERISTICS)
-                  } else {
-                    onCharacteristicChange([])
-                  }
-                }}
-              />
-              <Label htmlFor="characteristic-select-all" className="text-sm font-normal cursor-pointer">
-                全選択
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="characteristic-clear-all"
-                checked={selectedCharacteristics.length === 0}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    onCharacteristicChange([])
-                  }
-                }}
-              />
-              <Label htmlFor="characteristic-clear-all" className="text-sm font-normal cursor-pointer">
-                全クリア
-              </Label>
-            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onCharacteristicChange(ALL_CHARACTERISTICS)}
+              className="w-full justify-center"
+            >
+              全選択
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onCharacteristicChange([])}
+              className="w-full justify-center"
+            >
+              全クリア
+            </Button>
           </div>
         </div>
       </div>

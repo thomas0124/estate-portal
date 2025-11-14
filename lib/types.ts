@@ -34,9 +34,10 @@ export interface Property {
   propertyName: string // 物件名
   roomNumber?: string // 部屋番号
   propertyType: PropertyType // 種別
-  characteristic?: PropertyCharacteristic // 案件種特性
-  status: PropertyStatus // ステータス
+  characteristic?: PropertyCharacteristic // 売却理由
+  status: PropertyStatus // 取引態様
   price: number // 価格
+  priceInclTax?: number // 税込価格
   companyName: string // 社名
   handlerName: string // 担当者名
   athomeNumber?: string // アットホーム番号

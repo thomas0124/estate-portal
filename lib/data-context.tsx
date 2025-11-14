@@ -130,14 +130,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }, [ownedPropertyColor])
 
   const syncPropertyToTask = useCallback(
-    (propertyId: string) => {
-      const property = properties.find((p) => p.id === propertyId)
+    (property: Property) => {
       if (!property || property.status !== "契約後") {
         return
       }
 
       // 既存のタスクがあるかチェック
-      const existingTask = tasks.find((t) => t.propertyId === propertyId)
+      const existingTask = tasks.find((t) => t.propertyId === property.id)
       if (existingTask) {
         return
       }
@@ -169,8 +168,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
       }
 
       setTasks((prev) => [...prev, newTask])
+      localStorage.setItem("newlyAddedTaskSettlementDate", newTask.settlementDate.toISOString())
     },
-    [properties, tasks],
+    [tasks],
   )
 
   const updateProperty = useCallback(
@@ -178,12 +178,20 @@ export function DataProvider({ children }: { children: ReactNode }) {
       setProperties((prev) => {
         const index = prev.findIndex((p) => p.id === property.id)
         if (index >= 0) {
+          const originalProperty = prev[index]
+          const updatedProperty = {
+            ...property,
+            // Prevent changing the property number on update
+            propertyNumber: originalProperty.propertyNumber,
+            updatedAt: new Date(),
+          }
+
           const updated = [...prev]
-          updated[index] = { ...property, updatedAt: new Date() }
+          updated[index] = updatedProperty
 
           // ステータスが契約後に変更された場合、タスクを自動生成
-          if (property.status === "契約後" && prev[index].status !== "契約後") {
-            setTimeout(() => syncPropertyToTask(property.id), 0)
+          if (updatedProperty.status === "契約後" && originalProperty.status !== "契約後") {
+            setTimeout(() => syncPropertyToTask(updatedProperty), 0)
           }
 
           return updated
@@ -199,8 +207,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const newProperty = { ...property, createdAt: new Date(), updatedAt: new Date() }
       setProperties((prev) => [...prev, newProperty])
 
-      if (property.status === "契約後") {
-        setTimeout(() => syncPropertyToTask(property.id), 0)
+      if (newProperty.status === "契約後") {
+        setTimeout(() => syncPropertyToTask(newProperty), 0)
       }
     },
     [syncPropertyToTask],

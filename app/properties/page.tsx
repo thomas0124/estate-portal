@@ -12,6 +12,7 @@ import { PropertyEditDialog } from "@/components/property-edit-dialog"
 import { PropertyFilters } from "@/components/property-filters"
 import { getUniqueHandlers } from "@/lib/mock-data"
 import type { Property, PropertyType, PropertyStatus, PropertyCharacteristic, SortOrder } from "@/lib/types"
+import { toast } from "sonner"
 import { Plus, Search, ArrowUpDown, LogOut, ClipboardList, Settings, Menu } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
@@ -21,7 +22,7 @@ const ALL_CHARACTERISTICS: PropertyCharacteristic[] = ["相続", "通常", "離�
 export default function PropertiesPage() {
   const router = useRouter()
   const { user, logout, isLoading, isAdmin } = useAuth()
-  const { properties, addProperty } = useData()
+  const { properties, addProperty, updateProperty } = useData()
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
@@ -69,7 +70,7 @@ export default function PropertiesPage() {
     if (selectedStatuses.length > 0) {
       filtered = filtered.filter((p) => selectedStatuses.includes(p.status))
     } else {
-      filtered = filtered.filter((p) => p.status !== "販売中止")
+      filtered = filtered.filter((p) => p.status !== "販売中止" && p.status !== "契約後")
     }
 
     if (selectedHandlers.length > 0) {
@@ -86,6 +87,29 @@ export default function PropertiesPage() {
   const handleNew = () => {
     setSelectedProperty(null)
     setIsDialogOpen(true)
+  }
+
+  const handleEdit = (property: Property) => {
+    setSelectedProperty(property)
+    setIsDialogOpen(true)
+  }
+
+  const handleSave = (propertyToSave: Property) => {
+    if (selectedProperty) {
+      // Update existing property
+      updateProperty(propertyToSave)
+    } else {
+      // Create new property, check for duplicate property number
+      const isDuplicate = properties.some(p => p.propertyNumber === propertyToSave.propertyNumber)
+      if (isDuplicate) {
+        toast.error("エラー", {
+          description: "この物件番号は既に使用されています。",
+        })
+        return // Stop the save process
+      }
+      addProperty(propertyToSave)
+    }
+    setIsDialogOpen(false)
   }
 
   const resetFilters = () => {
@@ -247,6 +271,7 @@ export default function PropertiesPage() {
             selectedCharacteristics={selectedCharacteristics}
             sortField={sortField}
             sortOrder={sortOrder}
+            onCardClick={handleEdit}
           />
         </div>
       </main>
@@ -255,7 +280,7 @@ export default function PropertiesPage() {
         property={selectedProperty}
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
-        onSave={addProperty}
+        onSave={handleSave}
       />
     </div>
   )

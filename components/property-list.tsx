@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useMemo } from "react"
 import { PropertyCard } from "@/components/property-card"
-import { PropertyDetailDialog } from "@/components/property-detail-dialog"
 import { useData } from "@/lib/data-context"
 import type { Property, PropertyType, PropertyStatus, PropertyCharacteristic, SortOrder } from "@/lib/types"
 import { getHandlerColor } from "@/lib/mock-data"
@@ -15,6 +14,7 @@ interface PropertyListProps {
   selectedCharacteristics: PropertyCharacteristic[]
   sortField: "propertyNumber" | "price"
   sortOrder: SortOrder
+  onCardClick: (property: Property) => void
 }
 
 export function PropertyList({
@@ -25,10 +25,9 @@ export function PropertyList({
   selectedCharacteristics,
   sortField,
   sortOrder,
+  onCardClick,
 }: PropertyListProps) {
-  const { properties, updateProperty, addProperty } = useData()
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
-  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
+  const { properties } = useData()
 
   const filteredProperties = useMemo(() => {
     let filtered = properties
@@ -50,7 +49,7 @@ export function PropertyList({
     if (selectedStatuses.length > 0) {
       filtered = filtered.filter((p) => selectedStatuses.includes(p.status))
     } else {
-      filtered = filtered.filter((p) => p.status !== "販売中止")
+      filtered = filtered.filter((p) => p.status !== "販売中止" && p.status !== "契約後")
     }
 
     if (selectedHandlers.length > 0) {
@@ -85,19 +84,6 @@ export function PropertyList({
     return filtered
   }, [properties, searchQuery, selectedTypes, selectedStatuses, selectedHandlers, selectedCharacteristics, sortField, sortOrder])
 
-  const handleSave = (property: Property) => {
-    if (properties.find((p) => p.id === property.id)) {
-      updateProperty(property)
-    } else {
-      addProperty(property)
-    }
-  }
-
-  const handleCardClick = (property: Property) => {
-    setSelectedProperty(property)
-    setIsDetailDialogOpen(true)
-  }
-
   return (
     <>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-2 sm:gap-3">
@@ -106,7 +92,7 @@ export function PropertyList({
             key={property.id}
             property={property}
             handlerColor={getHandlerColor(property.handlerName)}
-            onClick={() => handleCardClick(property)}
+            onClick={() => onCardClick(property)}
           />
         ))}
       </div>
@@ -116,13 +102,6 @@ export function PropertyList({
           <p className="text-muted-foreground">該当する物件が見つかりません</p>
         </div>
       )}
-
-      <PropertyDetailDialog
-        property={selectedProperty}
-        open={isDetailDialogOpen}
-        onOpenChange={setIsDetailDialogOpen}
-        onUpdate={handleSave}
-      />
     </>
   )
 }

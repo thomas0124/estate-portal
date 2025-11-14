@@ -24,27 +24,27 @@ interface PropertyEditDialogProps {
 }
 
 const PROPERTY_TYPES: PropertyType[] = ["戸建て", "マンション", "土地", "その他"]
-const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "販売中止"]
+const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "契約後", "販売中止"]
 const PROPERTY_CHARACTERISTICS: PropertyCharacteristic[] = ["通常", "破産", "離婚", "相続", "その他"]
 const TRANSACTION_TYPES: TransactionType[] = ["元付(売)自社", "元付(売)他社", "客付(買)", "両直"]
 
 const availableTransactionTypes: Record<string, TransactionType[]> = {
   仲介物件: ["元付(売)自社", "元付(売)他社", "客付(買)", "両直"],
   業者物件: ["元付(売)自社", "客付(買)", "両直"],
-  所有物件: ["元付(売)自社", "両直"],
+  所有物件: ["客付(買)"],
   販売中止: ["元付(売)自社", "両直"],
 }
 
 export function PropertyEditDialog({ property, open, onOpenChange, onSave }: PropertyEditDialogProps) {
   const [formData, setFormData] = useState<Partial<Property>>({})
   const [priceInput, setPriceInput] = useState<string>("")
-
-  const TAX_RATE = 0.10 // 10% 消費税
+  const [priceInclTaxInput, setPriceInclTaxInput] = useState<string>("")
 
   useEffect(() => {
     if (property) {
       setFormData(property)
       setPriceInput(property.price ? formatPriceInManYen(property.price) : "")
+      setPriceInclTaxInput(property.priceInclTax ? formatPriceInManYen(property.priceInclTax) : "")
     } else {
       setFormData({
         propertyNumber: 0,
@@ -53,6 +53,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
         characteristic: "通常",
         status: "仲介物件",
         price: 0,
+        priceInclTax: 0,
         companyName: "",
         handlerName: "",
         athomeNumber: "",
@@ -67,11 +68,12 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
         keyPhotoUrl: undefined,
       })
       setPriceInput("")
+      setPriceInclTaxInput("")
     }
   }, [property, open])
 
   useEffect(() => {
-    if (formData.status) {
+    if (formData.status && formData.status !== "契約後") {
       const allowedTypes = availableTransactionTypes[formData.status]
       if (formData.transactionType && !allowedTypes.includes(formData.transactionType)) {
         setFormData((prev) => ({ ...prev, transactionType: allowedTypes[0] }))
@@ -83,6 +85,12 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
     const value = e.target.value
     setPriceInput(value)
     setFormData((prev) => ({ ...prev, price: parseManYenToNumber(value) || 0 }))
+  }
+
+  const handlePriceInclTaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setPriceInclTaxInput(value)
+    setFormData((prev) => ({ ...prev, priceInclTax: parseManYenToNumber(value) || 0 }))
   }
 
   const handleTransactionTypeChange = (value: TransactionType) => {
@@ -128,8 +136,6 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
   }
 
   const currentTransactionTypes = formData.status ? availableTransactionTypes[formData.status] : TRANSACTION_TYPES
-  const priceExclTax = formData.price || 0
-  const priceInclTax = Math.round(priceExclTax * (1 + TAX_RATE))
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -156,7 +162,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
 
           <div className="grid grid-cols-3 gap-4 items-end">
             <div className="space-y-2">
-              <Label htmlFor="status">ステータス</Label>
+              <Label htmlFor="status">取引態様</Label>
               <Select
                 value={formData.status}
                 onValueChange={(value) => setFormData({ ...formData, status: value as PropertyStatus })}
@@ -175,7 +181,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="price">価格（万円・税抜）</Label>
+              <Label htmlFor="price">税抜価格(万円)</Label>
               <Input
                 id="price"
                 type="text"
@@ -186,11 +192,12 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             </div>
 
             <div className="space-y-2">
-              <Label>価格（万円・税込）</Label>
+              <Label>税込価格(万円)</Label>
               <Input
-                value={formatPriceInManYen(priceInclTax)}
-                readOnly
-                className="bg-muted"
+                id="priceInclTax"
+                type="text"
+                value={priceInclTaxInput}
+                onChange={handlePriceInclTaxChange}
               />
             </div>
           </div>
@@ -250,21 +257,23 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label>取引形態</Label>
-            <RadioGroup
-              value={formData.transactionType}
-              onValueChange={(value) => handleTransactionTypeChange(value as TransactionType)}
-              className="flex space-x-4"
-            >
-              {currentTransactionTypes.map((type) => (
-                <div key={type} className="flex items-center space-x-2">
-                  <RadioGroupItem value={type} id={`transaction-type-${type}`} />
-                  <Label htmlFor={`transaction-type-${type}`}>{type}</Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </div>
+          {formData.status !== "契約後" && (
+            <div className="space-y-2">
+              <Label>取引形態</Label>
+              <RadioGroup
+                value={formData.transactionType}
+                onValueChange={(value) => handleTransactionTypeChange(value as TransactionType)}
+                className="flex space-x-4"
+              >
+                {currentTransactionTypes.map((type) => (
+                  <div key={type} className="flex items-center space-x-2">
+                    <RadioGroupItem value={type} id={`transaction-type-${type}`} />
+                    <Label htmlFor={`transaction-type-${type}`}>{type}</Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+          )}
 
           {/* 売主/買主の入力欄 */}
           <div className="grid grid-cols-2 gap-4">
@@ -432,6 +441,8 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
                 onChange={(e) => setFormData({ ...formData, propertyNumber: Number.parseInt(e.target.value) || 0 })}
                 required
                 min="1"
+                readOnly={property !== null}
+                className={property !== null ? "bg-muted" : ""}
               />
             </div>
 
@@ -456,7 +467,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="characteristic">案件種特性</Label>
+            <Label htmlFor="characteristic">売却理由</Label>
             <Select
               value={formData.characteristic}
               onValueChange={(value) => setFormData({ ...formData, characteristic: value as PropertyCharacteristic })}
