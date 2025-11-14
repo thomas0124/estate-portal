@@ -51,8 +51,9 @@ export function PropertyCard({ property, handlerColor, onClick }: PropertyCardPr
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">
-                {formatPriceInManYen(property.price)}
-                {property.priceInclTax ? ` (${formatPriceInManYen(property.priceInclTax)})` : ""}
+                {property.priceInclTax
+                  ? `${formatPriceInManYen(property.priceInclTax)} (税込)`
+                  : `${formatPriceInManYen(property.price)} (税抜)`}
               </span>
               <div className="flex flex-col items-end">
                 <span className="text-muted-foreground">{property.handlerName}</span>

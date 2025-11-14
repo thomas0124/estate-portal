@@ -9,6 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import type { PropertyTask, TaskDetail } from "@/lib/types"
 import { calculateTaskProgress } from "@/lib/mock-data"
 import { Trash } from "lucide-react"
+import { ProgressCircle } from "@/components/progress-circle"
 
 interface TaskTableProps {
   tasks: PropertyTask[]
@@ -158,11 +159,8 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete, isAdmin }: TaskTa
                     {task.estimatedSales}
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
-                    <div className="flex items-center gap-2">
-                      <div className="w-full bg-gray-300 rounded-full h-1.5">
-                        <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${progress}%` }} />
-                      </div>
-                      <span className="font-medium text-gray-700 text-xs w-8 text-right">{progress}%</span>
+                    <div className="flex items-center justify-center">
+                      <ProgressCircle progress={progress} />
                     </div>
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
