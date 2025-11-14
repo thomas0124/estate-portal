@@ -589,8 +589,7 @@ export function calculateTaskProgress(task: PropertyTask): { completed: number; 
     "demolition",
     "mortgageCancellation",
     "registration",
-    "venueArrangement",
-    "postProcessing", // postProcessing を追加
+    "postProcessing",
   ]
 
   const completedStatuses = ["完了", "不要", "金商契約済", "手配済（決済場所も手配済）"]
