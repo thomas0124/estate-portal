@@ -24,7 +24,7 @@ const loanProcedureStatusConfig: Record<
   { icon: React.ElementType; color: string; label: string }
 > = {
   未手配: { icon: Minus, color: "bg-slate-200 text-slate-600", label: "未手配" },
-  本申込: { icon: Check, color: "bg-green-200 text-green-800", label: "本申込" },
+  本申込済: { icon: Check, color: "bg-green-200 text-green-800", label: "本申込済" },
   金商契約済: { icon: Check, color: "bg-green-200 text-green-800", label: "金商契約済" },
 }
 
