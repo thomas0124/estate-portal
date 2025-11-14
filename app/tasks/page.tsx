@@ -110,6 +110,12 @@ export default function TasksPage() {
 
     tasks.forEach((task) => {
       const settlementDate = new Date(task.settlementDate)
+
+      // Add a check for valid date
+      if (isNaN(settlementDate.getTime())) {
+        console.warn("Invalid settlementDate for task:", task)
+        return // Skip this task if date is invalid
+      }
       const monthLabel = `${settlementDate.getFullYear()}.${(settlementDate.getMonth() + 1).toString().padStart(2, "0")}`
 
       // Ensure the monthLabel exists in stats, even if it's outside the current 'periods' range

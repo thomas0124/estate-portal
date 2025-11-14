@@ -20,7 +20,7 @@ export function getMonthlyPeriods(): Period[] {
     periods.push({
       start,
       end,
-      label: `${year}.${month}`,
+      label: `${year}.${month.toString().padStart(2, "0")}`,
     })
   }
 
@@ -43,7 +43,7 @@ export function shiftMonthlyPeriods(periods: Period[], direction: "up" | "down")
     return {
       start: newStart,
       end: newEnd,
-      label: `${newStart.getFullYear()}.${newStart.getMonth() + 1}`,
+      label: `${newStart.getFullYear()}.${(newStart.getMonth() + 1).toString().padStart(2, "0")}`,
     }
   })
 }
