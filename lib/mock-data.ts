@@ -590,7 +590,7 @@ export function calculateTaskProgress(task: PropertyTask): { completed: number; 
     "mortgageCancellation",
     "registration",
     "venueArrangement",
-    // postProcessing は進捗計算に含めない
+    "postProcessing", // postProcessing を追加
   ]
 
   const completedStatuses = ["完了", "不要", "金商契約済", "手配済（決済場所も手配済）"]
@@ -604,9 +604,9 @@ export function calculateTaskProgress(task: PropertyTask): { completed: number; 
   }).length
 
   // The contract itself is a completed step.
-  const contractCompleted = 1
-  const totalSteps = taskFields.length + contractCompleted
-  const completedSteps = completedTasks + contractCompleted
+  // const contractCompleted = 1 // 削除
+  const totalSteps = taskFields.length // contractCompleted を削除
+  const completedSteps = completedTasks // contractCompleted を削除
 
   return {
     completed: completedSteps,
