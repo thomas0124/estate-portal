@@ -39,7 +39,7 @@ export function PropertyCard({ property, handlerColor, onClick }: PropertyCardPr
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-sm leading-tight mb-1 flex items-center gap-1">
                   {buildingType?.icon && <span className="text-sm">{buildingType.icon}</span>}
-                  {property.propertyName}
+                  <span className="truncate">{property.propertyName}</span>
                   {property.characteristic && (
                     <Badge variant="secondary" className="text-xs px-1 py-0 h-4">
                       {property.characteristic}

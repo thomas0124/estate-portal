@@ -18,7 +18,9 @@ export function PropertyHoverContent({ property }: PropertyHoverContentProps) {
         <div>
           <span className="text-muted-foreground text-xs">価格</span>
           <p className="font-semibold">
-            {property.priceInclTax ? formatPriceInManYen(property.priceInclTax) : formatPriceInManYen(property.price)}
+            {property.priceInclTax
+              ? `${formatPriceInManYen(property.priceInclTax)} (税込)`
+              : `${formatPriceInManYen(property.price)} (税抜)`}
           </p>
         </div>
         <div>

@@ -96,7 +96,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete, isAdmin }: TaskTa
           </TableHeader>
           <TableBody>
             {tasks.map((task) => {
-              const progress = calculateTaskProgress(task)
+              const { completed, total, progress } = calculateTaskProgress(task)
               const daysInfo = getDaysUntilSettlement(task.settlementDate)
 
               return (
@@ -125,7 +125,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete, isAdmin }: TaskTa
                             <Button
                               variant="ghost"
                               size="icon"
-                              disabled={progress !== 100}
+                              disabled={progress.progress !== 100}
                               className="shrink-0"
                             >
                               <Trash className="h-4 w-4" />
@@ -160,7 +160,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete, isAdmin }: TaskTa
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
                     <div className="flex items-center justify-center">
-                      <ProgressCircle progress={progress} />
+                      <ProgressCircle completed={completed} total={total} progress={progress.progress} />
                     </div>
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">

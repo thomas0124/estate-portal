@@ -581,7 +581,7 @@ export function getUniqueHandlers(properties: Property[]): string[] {
   return Array.from(new Set(properties.map((p) => p.handlerName))).sort()
 }
 
-export function calculateTaskProgress(task: PropertyTask): number {
+export function calculateTaskProgress(task: PropertyTask): { completed: number; total: number; progress: number } {
   const taskFields: (keyof PropertyTask)[] = [
     "reform",
     "loanProcedure",
@@ -608,7 +608,11 @@ export function calculateTaskProgress(task: PropertyTask): number {
   const totalSteps = taskFields.length + contractCompleted
   const completedSteps = completedTasks + contractCompleted
 
-  return Math.floor((completedSteps / totalSteps) * 100)
+  return {
+    completed: completedSteps,
+    total: totalSteps,
+    progress: Math.floor((completedSteps / totalSteps) * 100),
+  }
 }
 
 export function getHandlerColor(handlerName: string): string {

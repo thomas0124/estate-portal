@@ -1,12 +1,14 @@
 import React from 'react';
 
 interface ProgressCircleProps {
-  progress: number;
+  completed: number;
+  total: number;
+  progress: number; // 円グラフ描画用
   size?: number;
   strokeWidth?: number;
 }
 
-export function ProgressCircle({ progress, size = 32, strokeWidth = 4 }: ProgressCircleProps) {
+export function ProgressCircle({ completed, total, progress, size = 32, strokeWidth = 4 }: ProgressCircleProps) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (progress / 100) * circumference;
@@ -40,7 +42,7 @@ export function ProgressCircle({ progress, size = 32, strokeWidth = 4 }: Progres
           }}
         />
       </svg>
-      <span className="absolute text-xs font-medium text-gray-700">{`${progress}%`}</span>
+      <span className="absolute text-xs font-medium text-gray-700">{`${completed}/${total}`}</span>
     </div>
   );
 }
