@@ -112,11 +112,14 @@ export default function TasksPage() {
       const settlementDate = new Date(task.settlementDate)
       const monthLabel = `${settlementDate.getFullYear()}.${(settlementDate.getMonth() + 1).toString().padStart(2, "0")}`
 
-      if (stats[monthLabel]) {
-        stats[monthLabel].count++
-        const [sell = 0, buy = 0] = task.estimatedSales.split("/").map(Number)
-        stats[monthLabel].monthlySales += sell + buy
+      // Ensure the monthLabel exists in stats, even if it's outside the current 'periods' range
+      if (!stats[monthLabel]) {
+        stats[monthLabel] = { count: 0, monthlySales: 0 }
       }
+
+      stats[monthLabel].count++
+      const [sell = 0, buy = 0] = task.estimatedSales.split("/").map(Number)
+      stats[monthLabel].monthlySales += sell + buy
     })
     return stats
   }, [tasks, periods])
