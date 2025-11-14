@@ -199,7 +199,7 @@ export function TaskEditDialog({ task, taskField, open, onOpenChange, onSave }: 
                 type="date"
                 value={taskDetail.plannedDate ? new Date(taskDetail.plannedDate).toISOString().split("T")[0] : ""}
                 onChange={(e) =>
-                  setTaskDetail({ ...taskDetail, plannedDate: e.target.value ? new Date(e.target.value) : undefined })
+                  setTaskDetail({ ...taskDetail, plannedDate: e.target.value ? new Date(e.target.value) : null })
                 }
               />
             </div>
