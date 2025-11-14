@@ -34,7 +34,7 @@ export function ProgressCircle({ completed, total, progress, size = 32, strokeWi
           cx={size / 2}
           cy={size / 2}
           style={{
-            strokeDasharray: circumference,
+            strokeDasharray: `${circumference} ${circumference}`,
             strokeDashoffset: offset,
             transform: 'rotate(-90deg)',
             transformOrigin: '50% 50%',

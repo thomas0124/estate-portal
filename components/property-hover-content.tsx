@@ -68,6 +68,22 @@ export function PropertyHoverContent({ property }: PropertyHoverContentProps) {
             </p>
           </div>
         )}
+        {(property.keyLocation || property.keyInfo) && (
+          <div className="col-span-2 grid grid-cols-2 gap-x-4">
+            {property.keyLocation && (
+              <div>
+                <span className="text-muted-foreground text-xs">鍵の場所</span>
+                <p>{property.keyLocation}</p>
+              </div>
+            )}
+            {property.keyInfo && (
+              <div>
+                <span className="text-muted-foreground text-xs">キーボックスの番号</span>
+                <p>{property.keyInfo}</p>
+              </div>
+            )}
+          </div>
+        )}
         {(property.sellerName || property.buyerName) && (
           <div className="col-span-2 grid grid-cols-2 gap-x-4">
             {property.sellerName && (

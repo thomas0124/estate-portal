@@ -398,6 +398,17 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="memo">メモ</Label>
+            <Textarea
+              id="memo"
+              value={formData.memo || ""}
+              onChange={(e) => setFormData({ ...formData, memo: e.target.value })}
+              maxLength={500}
+              rows={3}
+            />
+          </div>
+
           {formData.status === "契約後" && (
             <div className="grid grid-cols-2 gap-4 pt-2 border-t">
               <div className="space-y-2">

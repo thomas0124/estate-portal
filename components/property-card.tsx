@@ -59,8 +59,8 @@ export function PropertyCard({ property, handlerColor, onClick }: PropertyCardPr
                 <span className="text-muted-foreground">{property.handlerName}</span>
                 {(property.sellerName || property.buyerName) && (
                   <div className="text-[10px] text-muted-foreground/70 mt-0.5 flex flex-col items-end">
-                    {property.sellerName && <span>{`売主: ${property.sellerName}`}</span>}
-                    {property.buyerName && <span>{`買主: ${property.buyerName}`}</span>}
+                    {property.sellerName && <span className="truncate max-w-[80px]">{`売主: ${property.sellerName}`}</span>}
+                    {property.buyerName && <span className="truncate max-w-[80px]">{`買主: ${property.buyerName}`}</span>}
                   </div>
                 )}
               </div>
