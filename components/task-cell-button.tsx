@@ -44,6 +44,12 @@ export function TaskCellButton({ taskDetail, isOverdue, onClick, field }: TaskCe
   if (!config) return null // 安全対策
   const Icon = config.icon
 
+  let displayLabel = config.label // Initialize displayLabel with config.label
+  if (field === "postProcessing") {
+    // Apply postProcessing specific display logic
+    displayLabel = taskDetail.status === "手配中" ? "未処理" : taskDetail.status === "完了" ? "処理済" : displayLabel
+  }
+
   const isUntouched = taskDetail.status === "未手配"
 
   // ヘルパー: 日付フォーマット
@@ -63,7 +69,7 @@ export function TaskCellButton({ taskDetail, isOverdue, onClick, field }: TaskCe
     >
       <Badge className={`${config.color} text-xs mb-1 w-full justify-start`}>
         <Icon className="h-3 w-3 mr-1" />
-        {config.label}
+        {displayLabel}
       </Badge>
       <div className="space-y-0.5 text-xs">
         {/* 抵当権抹消は金融機関名を優先表示 */}
