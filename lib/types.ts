@@ -67,6 +67,7 @@ export interface Property {
   creditorPhone?: string // 債権者電話番号
 
   memo?: string // メモ
+  estimatedSales?: string // 売上見込み (例: "87/87") を追加
   contractDate?: Date // 契約日
   settlementDate?: Date // 決済日
 

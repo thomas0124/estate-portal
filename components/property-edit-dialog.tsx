@@ -66,6 +66,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
         isOccupied: false,
         isVacant: false,
         keyPhotoUrl: undefined,
+        estimatedSales: "", // 追加
       })
       setPriceInput("")
       setPriceInclTaxInput("")
@@ -202,6 +203,16 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             </div>
           </div>
 
+          <div className="space-y-2 max-w-xs">
+            <Label htmlFor="estimatedSales">売上見込み</Label>
+            <Input
+              id="estimatedSales"
+              value={formData.estimatedSales || ""}
+              onChange={(e) => setFormData({ ...formData, estimatedSales: e.target.value })}
+              placeholder=""
+              maxLength={20}
+            />
+          </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-2 space-y-2">

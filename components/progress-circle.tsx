@@ -11,7 +11,8 @@ interface ProgressCircleProps {
 export function ProgressCircle({ completed, total, progress, size = 32, strokeWidth = 4 }: ProgressCircleProps) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (progress / 100) * circumference;
+  const fillPercentage = total === 0 ? 0 : (completed / total); // 0除算対策
+  const offset = circumference - fillPercentage * circumference;
 
   return (
     <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
