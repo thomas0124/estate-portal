@@ -34,26 +34,22 @@ export function PropertyCard({ property, handlerColor, onClick }: PropertyCardPr
           onClick={onClick}
         >
           <CardContent className="p-2 space-y-1 relative">
-            <span className="absolute top-1 left-1 text-sm font-mono text-muted-foreground/70">No.{property.propertyNumber}</span>
-            <div className="flex items-start justify-between gap-1 pt-4">
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-sm leading-tight mb-1 flex items-center gap-1">
-                  {buildingType?.icon && <span className="text-sm">{buildingType.icon}</span>}
-                  <span className="truncate">{property.propertyName}</span>
-                  {property.characteristic && (
-                    <Badge variant="secondary" className="text-xs px-1 py-0 h-4">
-                      {property.characteristic}
-                    </Badge>
-                  )}
-                </h3>
+            <span className="absolute top-1 left-1 text-sm font-mono text-muted-foreground/70">
+              No.{property.propertyNumber}
+              {property.characteristic && (
+                <Badge variant="secondary" className="text-xs px-1 py-0 h-4 ml-1">
+                  {property.characteristic}
+                </Badge>
+              )}
+            </span>
                 <div className="text-xs text-muted-foreground truncate">{property.companyName}</div>
               </div>
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">
                 {property.priceInclTax
-                  ? `${formatPriceInManYen(property.priceInclTax)} (税込)`
-                  : `${formatPriceInManYen(property.price)} (税抜)`}
+                  ? `${formatPriceInManYen(property.priceInclTax)}`
+                  : `${formatPriceInManYen(property.price)}`}
               </span>
               <div className="flex flex-col items-end">
                 <span className="text-muted-foreground">{property.handlerName}</span>

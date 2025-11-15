@@ -67,7 +67,8 @@ export interface Property {
   creditorPhone?: string // 債権者電話番号
 
   memo?: string // メモ
-  estimatedSales?: string // 売上見込み (例: "87/87") を追加
+  sellerEstimatedSales?: string // 売主の売上見込み
+  buyerEstimatedSales?: string // 買主の売上見込み
   contractDate?: Date // 契約日
   settlementDate?: Date // 決済日
 
@@ -105,7 +106,6 @@ export interface PropertyTask {
   handlerColor: string // 担当者の色
   contractDate: Date
   settlementDate: Date
-  price: number
   estimatedSales: string // 売上見込み (例: "87/87")
   sellerName?: string // 売主名
   buyerName?: string // 買主名

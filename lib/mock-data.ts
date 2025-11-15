@@ -42,6 +42,8 @@ export const MOCK_PROPERTIES: Property[] = [
     createdAt: new Date("2024-01-15"),
     updatedAt: new Date("2024-01-15"),
     createdBy: "1",
+    sellerEstimatedSales: "0",
+    buyerEstimatedSales: "0",
   },
   {
     id: "2",
@@ -61,6 +63,8 @@ export const MOCK_PROPERTIES: Property[] = [
     createdAt: new Date("2024-02-01"),
     updatedAt: new Date("2024-02-01"),
     createdBy: "2",
+    sellerEstimatedSales: "0",
+    buyerEstimatedSales: "0",
   },
   {
     id: "3",
@@ -83,6 +87,8 @@ export const MOCK_PROPERTIES: Property[] = [
     createdAt: new Date("2024-02-10"),
     updatedAt: new Date("2024-02-10"),
     createdBy: "3",
+    sellerEstimatedSales: "0",
+    buyerEstimatedSales: "0",
   },
   {
     id: "4",
@@ -101,6 +107,8 @@ export const MOCK_PROPERTIES: Property[] = [
     createdAt: new Date("2024-01-20"),
     updatedAt: new Date("2024-01-20"),
     createdBy: "4",
+    sellerEstimatedSales: "0",
+    buyerEstimatedSales: "0",
   },
   {
     id: "5",
@@ -122,6 +130,8 @@ export const MOCK_PROPERTIES: Property[] = [
     createdBy: "1",
     isVacant: true,
     keyPhotoUrl: "https://via.placeholder.com/150/FF0000/FFFFFF?text=KeyPhoto",
+    sellerEstimatedSales: "0",
+    buyerEstimatedSales: "0",
   },
   {
     id: "6",
@@ -142,6 +152,8 @@ export const MOCK_PROPERTIES: Property[] = [
     createdAt: new Date("2024-03-01"),
     updatedAt: new Date("2025-07-14"),
     createdBy: "2",
+    sellerEstimatedSales: "0",
+    buyerEstimatedSales: "0",
   },
   {
     id: "7",
@@ -162,6 +174,8 @@ export const MOCK_PROPERTIES: Property[] = [
     createdAt: new Date("2025-02-01"),
     updatedAt: new Date("2025-02-20"),
     createdBy: "1",
+    sellerEstimatedSales: "0",
+    buyerEstimatedSales: "0",
   },
 ]
 
@@ -223,7 +237,6 @@ export const MOCK_TASKS: PropertyTask[] = [
     handlerColor: "#e6f9f3",
     contractDate: new Date("2025-02-01"),
     settlementDate: new Date("2025-04-15"),
-    price: 4500,
     estimatedSales: "80/70",
     sellerName: "佐藤花子",
     reform: { status: "手配中", companyName: "リフォーム太郎", plannedDate: new Date("2025-03-10") },
@@ -297,7 +310,6 @@ export const MOCK_TASKS: PropertyTask[] = [
     handlerColor: "#e6f9f3",
     contractDate: new Date("2025-03-15"),
     settlementDate: new Date("2025-07-01"),
-    price: 3900,
     estimatedSales: "60/50",
     reform: { status: "手配中", companyName: "博多リノベ", plannedDate: new Date("2025-05-10") },
     loanProcedure: { status: "本申込済", bank: "福岡銀行" },
@@ -345,7 +357,6 @@ export const MOCK_TASKS: PropertyTask[] = [
     handlerColor: "#f3e6fc",
     contractDate: new Date("2025-04-15"),
     settlementDate: new Date("2025-09-01"),
-    price: 4100,
     estimatedSales: "70/60",
     reform: { status: "手配中", companyName: "仙台リノベ", plannedDate: new Date("2025-06-20") },
     loanProcedure: { status: "本申込済", bank: "七十七銀行" },
