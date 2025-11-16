@@ -611,7 +611,7 @@ export function calculateTaskProgress(task: PropertyTask): { completed: number; 
     "postProcessing",
   ]
 
-  const completedStatuses = ["完了", "不要", "金商契約済", "手配済（決済場所も手配済）"]
+  const completedStatuses = ["完了", "不要", "金商契約済", "手配済（決済場所も手配済）", "処理済"]
 
   const completedTasks = taskFields.filter((field) => {
     const taskDetail = task[field] as TaskDetail | undefined

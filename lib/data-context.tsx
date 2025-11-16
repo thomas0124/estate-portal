@@ -236,7 +236,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         const taskToDelete = prev.find((task) => task.id === taskId)
         if (taskToDelete) {
           const progress = calculateTaskProgress(taskToDelete)
-          if (progress === 100) {
+          if (progress.progress === 100) {
             toast.success("タスクを削除しました", { description: `タスク ${taskToDelete.propertyName} を削除しました。` });
             return prev.filter((task) => task.id !== taskId)
           } else {

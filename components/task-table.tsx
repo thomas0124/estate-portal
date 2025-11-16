@@ -111,13 +111,6 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete, isAdmin }: TaskTa
                           {task.companyName}
                         </div>
                         <div className="text-gray-700 text-xs">{task.handlerName}</div>
-                        {(task.sellerName || task.buyerName) && (
-                          <div className="text-[9px] text-muted-foreground/70">
-                            {task.sellerName && `売主: ${task.sellerName}`}
-                            {task.sellerName && task.buyerName && " / "}
-                            {task.buyerName && `買主: ${task.buyerName}`}
-                          </div>
-                        )}
                       </div>
                       {isAdmin && (
                         <AlertDialog>
@@ -125,7 +118,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete, isAdmin }: TaskTa
                             <Button
                               variant="ghost"
                               size="icon"
-                              disabled={progress.progress !== 100}
+                              disabled={progress !== 100}
                               className="shrink-0"
                             >
                               <Trash className="h-4 w-4" />
