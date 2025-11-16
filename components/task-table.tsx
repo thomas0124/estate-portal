@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Input } from "@/components/ui/input"
 import { TaskCellButton } from "@/components/task-cell-button"
 import { TaskEditDialog } from "@/components/task-edit-dialog"
 import { Button } from "@/components/ui/button"
@@ -22,6 +23,8 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete, isAdmin }: TaskTa
   const [selectedTask, setSelectedTask] = useState<PropertyTask | null>(null)
   const [selectedTaskField, setSelectedTaskField] = useState<keyof PropertyTask | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
+  const [editingDate, setEditingDate] = useState<string>("")
 
   const handleTaskCellClick = (task: PropertyTask, field: keyof PropertyTask) => {
     setSelectedTask(task)
@@ -70,6 +73,31 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete, isAdmin }: TaskTa
     } else {
       return { text: `あと${diffDays}日`, color: "text-gray-500", isOverdue: false, isSettled: false }
     }
+  }
+
+  const handleSettlementDateClick = (task: PropertyTask) => {
+    if (isAdmin) {
+      setEditingTaskId(task.id)
+      setEditingDate(task.settlementDate.toISOString().split('T')[0])
+    }
+  }
+
+  const handleSettlementDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingDate(e.target.value)
+  }
+
+  const handleSettlementDateSave = (taskId: string) => {
+    const taskToUpdate = tasks.find(t => t.id === taskId)
+    if (taskToUpdate && editingDate) {
+      const newSettlementDate = new Date(editingDate)
+      if (!isNaN(newSettlementDate.getTime())) {
+        onTaskUpdate({
+          ...taskToUpdate,
+          settlementDate: newSettlementDate,
+        })
+      }
+    }
+    setEditingTaskId(null)
   }
 
   return (
@@ -157,15 +185,30 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete, isAdmin }: TaskTa
                     </div>
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
-                    {daysInfo.isSettled ? (
+                    {editingTaskId === task.id ? (
+                      <Input
+                        type="date"
+                        value={editingDate}
+                        onChange={handleSettlementDateChange}
+                        onBlur={() => handleSettlementDateSave(task.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleSettlementDateSave(task.id)
+                          } else if (e.key === 'Escape') {
+                            setEditingTaskId(null)
+                          }
+                        }}
+                        autoFocus
+                      />
+                    ) : daysInfo.isSettled ? (
                       <div className="font-bold text-green-700 text-xs">決済済</div>
                     ) : (
-                      <>
+                      <div onClick={() => handleSettlementDateClick(task)} className="cursor-pointer">
                         <div className="font-bold text-blue-700 text-xs">
                           {task.settlementDate.toLocaleDateString("ja-JP")}
                         </div>
                         <div className={`text-xs ${daysInfo.color}`}>{daysInfo.text}</div>
-                      </>
+                      </div>
                     )}
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
@@ -196,6 +239,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete, isAdmin }: TaskTa
                     <TaskCellButton
                       taskDetail={getTaskDetail(task, "demolition")}
                       isOverdue={isOverdue(task, "demolition")}
+      
                       onClick={() => handleTaskCellClick(task, "demolition")}
                       field="demolition"
                     />
