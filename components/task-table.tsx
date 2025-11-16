@@ -153,7 +153,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete, isAdmin }: TaskTa
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">
                     <div className="flex items-center justify-center">
-                      <ProgressCircle completed={completed} total={total} progress={progress.progress} />
+                      <ProgressCircle completed={completed} total={total} progress={progress} />
                     </div>
                   </TableCell>
                   <TableCell className="p-2 bg-amber-50">

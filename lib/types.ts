@@ -107,6 +107,7 @@ export interface PropertyTask {
   handlerColor: string // 担当者の色
   contractDate: Date
   settlementDate: Date
+  price: number // 価格
   estimatedSales: string // 売上見込み (例: "87/87")
   sellerName?: string // 売主名
   buyerName?: string // 買主名
