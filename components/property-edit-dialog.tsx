@@ -577,26 +577,46 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
 
 
 
-          <div className="space-y-2 pt-4 border-t">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="isContracted"
-                key={formData.status}
-                checked={formData.status === "契約後"}
-                onCheckedChange={(checked) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    status: checked ? "契約後" : "仲介物件", // Revert to a default status
-                  }));
-                }}
-              />
-              <Label htmlFor="isContracted" className="text-base font-semibold text-red-600">
-                契約済みにする
-              </Label>
+           <div className="space-y-2 pt-4 border-t">
+            <div className="space-y-2">
+              {formData.status === "契約後" ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    const statusToRestore = previousStatus || "仲介物件";
+                    setFormData((prev) => ({
+                      ...prev,
+                      status: statusToRestore,
+                    }));
+                  }}
+                  className="w-full"
+                >
+                  契約済みを解除する
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => {
+                    const currentStatus = formData.status || "仲介物件";
+                    if (currentStatus !== "契約後") {
+                      setPreviousStatus(currentStatus as PropertyStatus);
+                    }
+                    setFormData((prev) => ({
+                      ...prev,
+                      status: "契約後",
+                    }));
+                  }}
+                  className="w-full"
+                >
+                  契約済みにする
+                </Button>
+              )}
+              <p className="text-sm text-muted-foreground">
+                この物件を契約済みにすると、契約後タスク管理に移行します。
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground pl-6">
-              この物件を契約済みにすると、契約後タスク管理に移行します。
-            </p>
           </div>
 
           <div className="space-y-2 pt-4 border-t">
