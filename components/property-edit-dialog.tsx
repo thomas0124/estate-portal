@@ -26,13 +26,28 @@ interface PropertyEditDialogProps {
 const PROPERTY_TYPES: PropertyType[] = ["戸建て", "マンション", "土地", "その他"]
 const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "販売中止"]
 const PROPERTY_CHARACTERISTICS: PropertyCharacteristic[] = ["通常", "破産", "離婚", "相続", "その他"]
-const TRANSACTION_TYPES: TransactionType[] = ["元付(売)自社", "元付(売)他社", "客付(買)", "両直"]
+const TRANSACTION_TYPES: TransactionType[] = ["元付(売)分かれ", "元付(売)他社", "客付(買)", "両直"]
 
 const availableTransactionTypes: Record<string, TransactionType[]> = {
-  仲介物件: ["元付(売)自社", "元付(売)他社", "客付(買)", "両直"],
-  業者物件: ["元付(売)自社", "客付(買)", "両直"],
+  仲介物件: ["元付(売)分かれ", "元付(売)他社", "客付(買)", "両直"],
+  業者物件: ["元付(売)分かれ", "客付(買)", "両直"],
   所有物件: ["客付(買)"],
-  販売中止: ["元付(売)自社", "両直"],
+  販売中止: ["元付(売)分かれ", "両直"],
+}
+
+const getVendorSectionTitle = (transactionType: TransactionType | undefined) => {
+  switch (transactionType) {
+    case "元付(売)分かれ":
+      return "取引業者 (客付け業者)"
+    case "元付(売)他社":
+      return "取引業者 (売主業者)"
+    case "客付(買)":
+      return "取引業者 (元付け業者)"
+    case "両直":
+      return "取引業者"
+    default:
+      return "取引業者" // デフォルト値
+  }
 }
 
 export function PropertyEditDialog({ property, open, onOpenChange, onSave }: PropertyEditDialogProps) {
@@ -58,8 +73,8 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
         companyName: "",
         handlerName: "",
         athomeNumber: "",
-        transactionType: "元付(売)自社",
-        vendorCompanyName: "ライフリノベーション",
+        transactionType: "元付(売)分かれ", // 初期値も変更
+        vendorCompanyName: "", // 初期値も変更
         vendorContactPerson: "",
         vendorPhone: "",
         sellerName: "",
@@ -100,10 +115,10 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
   const handleTransactionTypeChange = (value: TransactionType) => {
     setFormData((prev) => {
       const newFormData = { ...prev, transactionType: value }
-      if (value === "元付(売)自社") {
-        newFormData.vendorCompanyName = "ライフリノベーション"
-      } else if (prev.vendorCompanyName === "ライフリノベーション") {
+      if (value === "元付(売)分かれ") {
         newFormData.vendorCompanyName = ""
+      } else {
+        newFormData.vendorCompanyName = "ライフリノベーション"
       }
       return newFormData
     })
@@ -328,13 +343,10 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
 
 
 
-
-
-
           {/* 売主/買主の入力欄 */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="sellerName">売主</Label>
+              <Label htmlFor="sellerName">売主名</Label>
               <Input
                 id="sellerName"
                 value={formData.sellerName || ""}
@@ -343,16 +355,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="sellerSalesForecast">売主売上見込み</Label>
-              <Input
-                id="sellerSalesForecast"
-                value={formData.sellerSalesForecast || ""}
-                onChange={(e) => setFormData({ ...formData, sellerSalesForecast: e.target.value })}
-                maxLength={100}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="buyerName">買主</Label>
+              <Label htmlFor="buyerName">買主名</Label>
               <Input
                 id="buyerName"
                 value={formData.buyerName || ""}
@@ -361,7 +364,16 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="buyerSalesForecast">買主売上見込み</Label>
+              <Label htmlFor="sellerSalesForecast">売上見込(売主)</Label>
+              <Input
+                id="sellerSalesForecast"
+                value={formData.sellerSalesForecast || ""}
+                onChange={(e) => setFormData({ ...formData, sellerSalesForecast: e.target.value })}
+                maxLength={100}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="buyerSalesForecast">売上見込(買主)</Label>
               <Input
                 id="buyerSalesForecast"
                 value={formData.buyerSalesForecast || ""}
@@ -390,7 +402,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
           )}
 
           <div className="space-y-2">
-            <Label>取引業者</Label>
+            <Label className="block mb-2">{getVendorSectionTitle(formData.transactionType)}</Label>
             <div className="grid grid-cols-3 gap-4 p-4 border rounded-md">
               <div className="space-y-2">
                 <Label htmlFor="vendorCompanyName">社名</Label>
@@ -510,7 +522,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
                   type="date"
                   value={formData.contractDate ? new Date(formData.contractDate).toISOString().split("T")[0] : ""}
                   onChange={(e) =>
-                    setFormData({ ...formData, contractDate: e.target.value ? new Date(e.target.value) : undefined })
+                    setFormData((prev) => ({ ...prev, contractDate: e.target.value ? new Date(e.target.value) : undefined }))
                   }
                   required
                 />
@@ -523,10 +535,10 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
                   type="date"
                   value={formData.settlementDate ? new Date(formData.settlementDate).toISOString().split("T")[0] : ""}
                   onChange={(e) =>
-                    setFormData({
+                    setFormData((prev) => ({
                       ...prev,
                       settlementDate: e.target.value ? new Date(e.target.value) : undefined,
-                    })
+                    }))
                   }
                   required
                 />

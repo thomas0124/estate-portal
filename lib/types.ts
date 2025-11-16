@@ -18,7 +18,7 @@ export type PropertyStatus = "仲介物件" | "業者物件" | "所有物件" | 
 
 export type PropertyCharacteristic = "相続" | "通常" | "離婚" | "破産" | "その他"
 
-export type TransactionType = "元付(売)自社" | "元付(売)他社" | "客付(買)" | "両直"
+export type TransactionType = "元付(売)分かれ" | "元付(売)他社" | "客付(買)" | "両直"
 
 export interface StatusColorConfig {
   仲介物件: string

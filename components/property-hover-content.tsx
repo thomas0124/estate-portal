@@ -76,7 +76,7 @@ export function PropertyHoverContent({ property }: PropertyHoverContentProps) {
             )}
           </div>
         )}
-        {(property.sellerName || property.buyerName) && (
+        {(property.sellerName || property.buyerName || property.sellerSalesForecast || property.buyerSalesForecast) && (
           <div className="col-span-2 grid grid-cols-2 gap-x-4">
             {property.sellerName && (
               <div>
@@ -88,6 +88,18 @@ export function PropertyHoverContent({ property }: PropertyHoverContentProps) {
               <div>
                 <span className="text-muted-foreground text-xs">買主</span>
                 <p>{property.buyerName}</p>
+              </div>
+            )}
+            {property.sellerSalesForecast && (
+              <div>
+                <span className="text-muted-foreground text-xs">売上見込(売主)</span>
+                <p>{property.sellerSalesForecast}</p>
+              </div>
+            )}
+            {property.buyerSalesForecast && (
+              <div>
+                <span className="text-muted-foreground text-xs">売上見込(買主)</span>
+                <p>{property.buyerSalesForecast}</p>
               </div>
             )}
           </div>
