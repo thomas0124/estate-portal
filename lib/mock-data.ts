@@ -44,6 +44,8 @@ export const MOCK_PROPERTIES: Property[] = [
     createdBy: "1",
     sellerEstimatedSales: "0",
     buyerEstimatedSales: "0",
+    sellerName: "山田太郎",
+    buyerName: "佐藤花子",
   },
   {
     id: "2",
@@ -154,6 +156,8 @@ export const MOCK_PROPERTIES: Property[] = [
     createdBy: "2",
     sellerEstimatedSales: "0",
     buyerEstimatedSales: "0",
+    sellerName: "加藤健一",
+    buyerName: "吉田美咲",
   },
   {
     id: "7",
@@ -176,6 +180,8 @@ export const MOCK_PROPERTIES: Property[] = [
     createdBy: "1",
     sellerEstimatedSales: "0",
     buyerEstimatedSales: "0",
+    sellerName: "鈴木一郎",
+    buyerName: "高橋恵子",
   },
 ]
 
@@ -239,6 +245,7 @@ export const MOCK_TASKS: PropertyTask[] = [
     settlementDate: new Date("2025-04-15"),
     estimatedSales: "80/70",
     sellerName: "佐藤花子",
+    buyerName: "高橋恵子",
     reform: { status: "手配中", companyName: "リフォーム太郎", plannedDate: new Date("2025-03-10") },
     loanProcedure: { status: "本申込済", bank: "三菱UFJ銀行" },
     survey: { status: "完了", completionDate: new Date("2025-02-20") },
@@ -263,6 +270,7 @@ export const MOCK_TASKS: PropertyTask[] = [
     settlementDate: new Date("2025-05-20"),
     price: 6800,
     estimatedSales: "120/100",
+    sellerName: "山本一郎",
     buyerName: "高橋健太",
     reform: { status: "完了", completionDate: new Date("2025-03-15") },
     loanProcedure: { status: "金商契約済" },

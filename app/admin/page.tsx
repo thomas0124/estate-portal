@@ -42,6 +42,7 @@ export default function AdminPage() {
   const [buildingTypeIcon, setBuildingTypeIcon] = useState("🏠")
 
   const [ownedPropertyColor, setOwnedPropertyColor] = useState(contextOwnedPropertyColor)
+  const [ownedPropertyColorDialogOpen, setOwnedPropertyColorDialogOpen] = useState(false)
 
   useEffect(() => {
     setOwnedPropertyColor(contextOwnedPropertyColor)
@@ -53,9 +54,10 @@ export default function AdminPage() {
     }
   }, [user, isAdmin, isLoading, router])
 
-  const handleSaveOwnedPropertyColor = () => {
+  const handleSaveOwnedPropertyColorDialog = () => {
     updateOwnedPropertyColor(ownedPropertyColor)
     toast.success("所有物件の色を保存しました")
+    setOwnedPropertyColorDialogOpen(false)
   }
 
   const handleSaveHandler = () => {
@@ -255,6 +257,57 @@ export default function AdminPage() {
 
           <Card>
             <CardHeader>
+              <CardTitle>所有物件色管理</CardTitle>
+              <CardDescription>所有物件カードの背景色と枠線の色を管理します。</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between p-3 rounded-lg border" style={{ backgroundColor: ownedPropertyColor + "20" }}>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full" style={{ backgroundColor: ownedPropertyColor }} />
+                  <span className="font-medium">所有物件色</span>
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => setOwnedPropertyColorDialogOpen(true)}>
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Owned Property Color Edit Dialog */}
+          <Dialog open={ownedPropertyColorDialogOpen} onOpenChange={setOwnedPropertyColorDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>所有物件色を編集</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>色の編集</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="color"
+                      value={ownedPropertyColor}
+                      onChange={(e) => setOwnedPropertyColor(e.target.value)}
+                      className="w-20 h-10"
+                    />
+                    <Input
+                      value={ownedPropertyColor}
+                      onChange={(e) => setOwnedPropertyColor(e.target.value)}
+                      placeholder="#fed7aa"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={() => setOwnedPropertyColorDialogOpen(false)}>
+                    キャンセル
+                  </Button>
+                  <Button onClick={handleSaveOwnedPropertyColorDialog}>保存</Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Card>
+            <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>建物種別管理</CardTitle>
@@ -328,34 +381,6 @@ export default function AdminPage() {
                     </div>
                   </div>
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>所有物件色管理</CardTitle>
-              <CardDescription>所有物件カードの背景色と枠線の色を管理します。</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Label>色の編集</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type="color"
-                    value={ownedPropertyColor}
-                    onChange={(e) => setOwnedPropertyColor(e.target.value)}
-                    className="w-20 h-10"
-                  />
-                  <Input
-                    value={ownedPropertyColor}
-                    onChange={(e) => setOwnedPropertyColor(e.target.value)}
-                    placeholder="#fed7aa"
-                  />
-                </div>
-                <div className="flex justify-end">
-                  <Button onClick={handleSaveOwnedPropertyColor}>保存</Button>
-                </div>
               </div>
             </CardContent>
           </Card>

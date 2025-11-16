@@ -61,6 +61,18 @@ export function PropertyDetailDialog({ property, open, onOpenChange, onUpdate }:
                 <span className="text-muted-foreground">担当者</span>
                 <p>{property.handlerName}</p>
               </div>
+              {property.sellerName && (
+                <div>
+                  <span className="text-muted-foreground">売主</span>
+                  <p>{property.sellerName}</p>
+                </div>
+              )}
+              {property.buyerName && (
+                <div>
+                  <span className="text-muted-foreground">買主</span>
+                  <p>{property.buyerName}</p>
+                </div>
+              )}
               {property.responsiblePerson && (
                 <div>
                   <span className="text-muted-foreground">責任者</span>

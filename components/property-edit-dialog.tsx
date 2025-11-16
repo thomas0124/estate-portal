@@ -24,7 +24,7 @@ interface PropertyEditDialogProps {
 }
 
 const PROPERTY_TYPES: PropertyType[] = ["戸建て", "マンション", "土地", "その他"]
-const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "契約後", "販売中止"]
+const PROPERTY_STATUSES: PropertyStatus[] = ["仲介物件", "業者物件", "所有物件", "販売中止"]
 const PROPERTY_CHARACTERISTICS: PropertyCharacteristic[] = ["通常", "破産", "離婚", "相続", "その他"]
 const TRANSACTION_TYPES: TransactionType[] = ["元付(売)自社", "元付(売)他社", "客付(買)", "両直"]
 
@@ -39,6 +39,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
   const [formData, setFormData] = useState<Partial<Property>>({})
   const [priceInput, setPriceInput] = useState<string>("")
   const [priceInclTaxInput, setPriceInclTaxInput] = useState<string>("")
+  const [previousStatus, setPreviousStatus] = useState<PropertyStatus>('仲介物件');
 
   useEffect(() => {
     if (property) {
@@ -523,12 +524,18 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
                   value={formData.settlementDate ? new Date(formData.settlementDate).toISOString().split("T")[0] : ""}
                   onChange={(e) =>
                     setFormData({
-                      ...formData,
+                      ...prev,
                       settlementDate: e.target.value ? new Date(e.target.value) : undefined,
                     })
                   }
                   required
                 />
+              </div>
+              <div className="space-y-2 col-span-2">
+                <Label>顧客名</Label>
+                <p className="text-sm text-gray-700">
+                  売主: {formData.sellerName || "未入力"} / 買主: {formData.buyerName || "未入力"}
+                </p>
               </div>
             </div>
           )}
@@ -569,6 +576,28 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
           </div>
 
 
+
+          <div className="space-y-2 pt-4 border-t">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="isContracted"
+                key={formData.status}
+                checked={formData.status === "契約後"}
+                onCheckedChange={(checked) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    status: checked ? "契約後" : "仲介物件", // Revert to a default status
+                  }));
+                }}
+              />
+              <Label htmlFor="isContracted" className="text-base font-semibold text-red-600">
+                契約済みにする
+              </Label>
+            </div>
+            <p className="text-sm text-muted-foreground pl-6">
+              この物件を契約済みにすると、契約後タスク管理に移行します。
+            </p>
+          </div>
 
           <div className="space-y-2 pt-4 border-t">
             <Label htmlFor="athomeNumber">アットホーム番号</Label>
