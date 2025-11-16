@@ -78,6 +78,7 @@ export function TaskCellButton({ taskDetail, isOverdue, onClick, field }: TaskCe
             {taskDetail.bank}
           </div>
         ) : (
+          field !== "loanProcedure" &&
           taskDetail.companyName && (
             <div className="truncate text-gray-700" title={taskDetail.companyName}>
               {taskDetail.companyName}
@@ -85,8 +86,26 @@ export function TaskCellButton({ taskDetail, isOverdue, onClick, field }: TaskCe
           )
         )}
 
-        {/* 抵当権抹消で会社名が不要な場合、bank のみ表示される。その他は bank を補助表示 */}
-        {field !== "mortgageCancellation" && taskDetail.bank && (
+        {/* 融資手続きは金融機関名と担当者を表示 */}
+        {field === "loanProcedure" && (taskDetail.bank || (taskDetail as any).bankContact) && (
+          <div className="flex items-center gap-2">
+            <div className="truncate text-gray-700" style={{ flex: "0 0 60%" }} title={taskDetail.bank}>
+              {taskDetail.bank}
+            </div>
+            {(taskDetail as any).bankContact && (
+              <div
+                className="truncate text-gray-500 text-right"
+                style={{ flex: "0 0 40%" }}
+                title={(taskDetail as any).bankContact}
+              >
+                {(taskDetail as any).bankContact}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 抵当権抹消・融資手続き以外で bank のみ表示 */}
+        {field !== "mortgageCancellation" && field !== "loanProcedure" && taskDetail.bank && (
           <div className="truncate text-gray-700" title={taskDetail.bank}>
             {taskDetail.bank}
           </div>

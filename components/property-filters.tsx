@@ -78,12 +78,12 @@ export function PropertyFilters({
             </div>
           ))}
           <Separator className="my-2" />
-          <div className="flex flex-col space-y-2">
+          <div className="flex space-x-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => onTypeChange(PROPERTY_TYPES)}
-              className="w-full justify-center"
+              className="justify-center"
             >
               全選択
             </Button>
@@ -91,7 +91,7 @@ export function PropertyFilters({
               variant="outline"
               size="sm"
               onClick={() => onTypeChange([])}
-              className="w-full justify-center"
+              className="justify-center"
             >
               全クリア
             </Button>
@@ -117,12 +117,12 @@ export function PropertyFilters({
             </div>
           ))}
           <Separator className="my-2" />
-          <div className="flex flex-col space-y-2">
+          <div className="flex space-x-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => onStatusChange(PROPERTY_STATUSES)}
-              className="w-full justify-center"
+              className="justify-center"
             >
               全選択
             </Button>
@@ -130,7 +130,7 @@ export function PropertyFilters({
               variant="outline"
               size="sm"
               onClick={() => onStatusChange([])}
-              className="w-full justify-center"
+              className="justify-center"
             >
               全クリア
             </Button>
@@ -156,12 +156,12 @@ export function PropertyFilters({
             </div>
           ))}
           <Separator className="my-2" />
-          <div className="flex flex-col space-y-2">
+          <div className="flex space-x-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => onCharacteristicChange(ALL_CHARACTERISTICS)}
-              className="w-full justify-center"
+              className="justify-center"
             >
               全選択
             </Button>
@@ -169,7 +169,7 @@ export function PropertyFilters({
               variant="outline"
               size="sm"
               onClick={() => onCharacteristicChange([])}
-              className="w-full justify-center"
+              className="justify-center"
             >
               全クリア
             </Button>

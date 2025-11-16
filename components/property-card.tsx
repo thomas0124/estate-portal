@@ -42,7 +42,14 @@ export function PropertyCard({ property, handlerColor, onClick }: PropertyCardPr
                 </Badge>
               )}
             </span>
-                <div className="text-xs text-muted-foreground truncate">{property.companyName}</div>
+            <div className="flex items-start justify-between gap-1 pt-4">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-sm leading-tight mb-1 flex items-center gap-1">
+                  {buildingType?.icon && <span className="text-sm">{buildingType.icon}</span>}
+                  <span className="truncate">{property.propertyName}</span>
+
+                </h3>
+                <div className="text-xs text-muted-foreground truncate">{property.memo}</div>
               </div>
             </div>
             <div className="flex items-center justify-between text-xs">
@@ -61,6 +68,7 @@ export function PropertyCard({ property, handlerColor, onClick }: PropertyCardPr
                 )}
               </div>
             </div>
+
             <div className="flex items-center justify-end gap-1">
               <Badge variant="outline" className={`text-xs px-1.5 py-0.5 ${statusColors[property.status]}`}>
                 {property.status}

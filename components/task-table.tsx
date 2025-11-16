@@ -75,22 +75,22 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete, isAdmin }: TaskTa
   return (
     <>
       <div className="overflow-x-auto border rounded-lg">
-        <Table>
+        <Table className="table-fixed">
           <TableHeader className="bg-gray-100 sticky top-0 z-20">
             <TableRow>
-              <TableHead className="sticky left-0 z-10 bg-gray-100 min-w-[140px] text-xs font-bold">顧客名</TableHead>
-              <TableHead className="text-xs font-bold min-w-[90px]">契約日</TableHead>
-              <TableHead className="text-xs font-bold min-w-[100px]">価格</TableHead>
-              <TableHead className="text-xs font-bold min-w-[90px]">売上見込</TableHead>
-              <TableHead className="text-xs font-bold min-w-[100px]">全体進捗</TableHead>
-              <TableHead className="text-xs font-bold min-w-[110px]">決済日</TableHead>
-              <TableHead className="text-xs font-bold min-w-[110px]">リフォーム</TableHead>
-              <TableHead className="text-xs font-bold min-w-[110px]">融資手続き</TableHead>
-              <TableHead className="text-xs font-bold min-w-[130px]">土地家屋調査士</TableHead>
-              <TableHead className="text-xs font-bold min-w-[110px]">解体</TableHead>
-              <TableHead className="text-xs font-bold min-w-[110px]">抵当権抹消</TableHead>
-              <TableHead className="text-xs font-bold min-w-[110px]">登記</TableHead>
-              <TableHead className="text-xs font-bold min-w-[110px]">後処理</TableHead>
+              <TableHead className="sticky left-0 z-10 bg-gray-100 w-[140px] text-xs font-bold">顧客名</TableHead>
+              <TableHead className="text-xs font-bold w-[90px]">契約日</TableHead>
+              <TableHead className="text-xs font-bold w-[100px]">価格</TableHead>
+              <TableHead className="text-xs font-bold w-[90px]">売上見込</TableHead>
+              <TableHead className="text-xs font-bold w-[100px]">全体進捗</TableHead>
+              <TableHead className="text-xs font-bold w-[110px]">決済日</TableHead>
+              <TableHead className="text-xs font-bold w-[110px]">リフォーム</TableHead>
+              <TableHead className="text-xs font-bold w-[110px]">融資手続き</TableHead>
+              <TableHead className="text-xs font-bold w-[130px]">土地家屋調査士</TableHead>
+              <TableHead className="text-xs font-bold w-[110px]">解体</TableHead>
+              <TableHead className="text-xs font-bold w-[110px]">抵当権抹消</TableHead>
+              <TableHead className="text-xs font-bold w-[110px]">登記</TableHead>
+              <TableHead className="text-xs font-bold w-[110px]">後処理</TableHead>
 
             </TableRow>
           </TableHeader>

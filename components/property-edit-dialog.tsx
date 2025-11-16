@@ -61,12 +61,14 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
         vendorCompanyName: "ライフリノベーション",
         vendorContactPerson: "",
         vendorPhone: "",
-        sellerName: "", // New field
-        buyerName: "", // New field
+        sellerName: "",
+        sellerSalesForecast: "", // New field
+        buyerName: "",
+        buyerSalesForecast: "", // New field
         isOccupied: false,
         isVacant: false,
         keyPhotoUrl: undefined,
-        estimatedSales: "", // 追加
+
       })
       setPriceInput("")
       setPriceInclTaxInput("")
@@ -161,26 +163,143 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-4 items-end">
-            <div className="space-y-2">
-              <Label htmlFor="status">取引態様</Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => setFormData({ ...formData, status: value as PropertyStatus })}
-              >
-                <SelectTrigger id="status">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {PROPERTY_STATUSES.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                    <div className="grid grid-cols-4 gap-4">
 
+                      <div className="space-y-2">
+
+                        <Label htmlFor="status">取引態様</Label>
+
+                        <Select
+
+                          value={formData.status}
+
+                          onValueChange={(value) => setFormData({ ...formData, status: value as PropertyStatus })}
+
+                        >
+
+                          <SelectTrigger id="status">
+
+                            <SelectValue />
+
+                          </SelectTrigger>
+
+                          <SelectContent>
+
+                            {PROPERTY_STATUSES.map((status) => (
+
+                              <SelectItem key={status} value={status}>
+
+                                {status}
+
+                              </SelectItem>
+
+                            ))}
+
+                          </SelectContent>
+
+                        </Select>
+
+                      </div>
+
+          
+
+                      <div className="space-y-2">
+
+                        <Label htmlFor="infoSource">情報元</Label>
+
+                        <Input
+
+                          id="infoSource"
+
+                          value={formData.infoSource || ""}
+
+                          onChange={(e) => setFormData({ ...formData, infoSource: e.target.value })}
+
+                          maxLength={100}
+
+                        />
+
+                      </div>
+
+          
+
+                      <div className="space-y-2">
+
+                        <Label htmlFor="characteristic">売却理由</Label>
+
+                        <Select
+
+                          value={formData.characteristic}
+
+                          onValueChange={(value) => setFormData({ ...formData, characteristic: value as PropertyCharacteristic })}
+
+                        >
+
+                          <SelectTrigger id="characteristic">
+
+                            <SelectValue />
+
+                          </SelectTrigger>
+
+                          <SelectContent>
+
+                            {PROPERTY_CHARACTERISTICS.map((char) => (
+
+                              <SelectItem key={char} value={char}>
+
+                                {char}
+
+                              </SelectItem>
+
+                            ))}
+
+                          </SelectContent>
+
+                        </Select>
+
+                      </div>
+
+          
+
+                      <div className="space-y-2">
+
+                        <Label htmlFor="handlerName">担当者名</Label>
+
+                        <Select
+
+                          value={formData.handlerName}
+
+                          onValueChange={(value) => setFormData({ ...formData, handlerName: value })}
+
+                        >
+
+                          <SelectTrigger id="handlerName" className="pl-1">
+
+                            <SelectValue placeholder="担当者を選択" className="truncate" />
+
+                          </SelectTrigger>
+
+                          <SelectContent>
+
+                            {MOCK_HANDLERS.map((handler) => (
+
+                              <SelectItem key={handler.id} value={handler.name}>
+
+                                {handler.name}
+
+                              </SelectItem>
+
+                            ))}
+
+                          </SelectContent>
+
+                        </Select>
+
+                      </div>
+
+                    </div>
+
+          <div className="grid grid-cols-2 gap-4 items-end">
             <div className="space-y-2">
               <Label htmlFor="price">税抜価格(万円)</Label>
               <Input
@@ -203,66 +322,49 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             </div>
           </div>
 
-          <div className="space-y-2 max-w-xs">
-            <Label htmlFor="estimatedSales">売上見込み</Label>
-            <Input
-              id="estimatedSales"
-              value={formData.estimatedSales || ""}
-              onChange={(e) => setFormData({ ...formData, estimatedSales: e.target.value })}
-              placeholder=""
-              maxLength={20}
-            />
-          </div>
 
-          <div className="grid grid-cols-3 gap-4">
-            <div className="col-span-2 space-y-2">
-              <Label htmlFor="companyName">社名</Label>
-              <Input
-                id="companyName"
-                value={formData.companyName || ""}
-                onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                required
-                maxLength={200}
-              />
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="handlerName">担当者名</Label>
-              <Select
-                value={formData.handlerName}
-                onValueChange={(value) => setFormData({ ...formData, handlerName: value })}
-              >
-                <SelectTrigger id="handlerName">
-                  <SelectValue placeholder="担当者を選択" />
-                </SelectTrigger>
-                <SelectContent>
-                  {MOCK_HANDLERS.map((handler) => (
-                    <SelectItem key={handler.id} value={handler.name}>
-                      {handler.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
 
+
+
+
+
+
+          {/* 売主/買主の入力欄 */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="responsiblePerson">責任者</Label>
+              <Label htmlFor="sellerName">売主</Label>
               <Input
-                id="responsiblePerson"
-                value={formData.responsiblePerson || ""}
-                onChange={(e) => setFormData({ ...formData, responsiblePerson: e.target.value })}
-                maxLength={50}
+                id="sellerName"
+                value={formData.sellerName || ""}
+                onChange={(e) => setFormData({ ...formData, sellerName: e.target.value })}
+                maxLength={100}
               />
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="infoSource">情報元</Label>
+              <Label htmlFor="sellerSalesForecast">売主売上見込み</Label>
               <Input
-                id="infoSource"
-                value={formData.infoSource || ""}
-                onChange={(e) => setFormData({ ...formData, infoSource: e.target.value })}
+                id="sellerSalesForecast"
+                value={formData.sellerSalesForecast || ""}
+                onChange={(e) => setFormData({ ...formData, sellerSalesForecast: e.target.value })}
+                maxLength={100}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="buyerName">買主</Label>
+              <Input
+                id="buyerName"
+                value={formData.buyerName || ""}
+                onChange={(e) => setFormData({ ...formData, buyerName: e.target.value })}
+                maxLength={100}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="buyerSalesForecast">買主売上見込み</Label>
+              <Input
+                id="buyerSalesForecast"
+                value={formData.buyerSalesForecast || ""}
+                onChange={(e) => setFormData({ ...formData, buyerSalesForecast: e.target.value })}
                 maxLength={100}
               />
             </div>
@@ -285,28 +387,6 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
               </RadioGroup>
             </div>
           )}
-
-          {/* 売主/買主の入力欄 */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="sellerName">売主名</Label>
-              <Input
-                id="sellerName"
-                value={formData.sellerName || ""}
-                onChange={(e) => setFormData({ ...formData, sellerName: e.target.value })}
-                maxLength={100}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="buyerName">買主名</Label>
-              <Input
-                id="buyerName"
-                value={formData.buyerName || ""}
-                onChange={(e) => setFormData({ ...formData, buyerName: e.target.value })}
-                maxLength={100}
-              />
-            </div>
-          </div>
 
           <div className="space-y-2">
             <Label>取引業者</Label>
@@ -488,24 +568,7 @@ export function PropertyEditDialog({ property, open, onOpenChange, onSave }: Pro
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="characteristic">売却理由</Label>
-            <Select
-              value={formData.characteristic}
-              onValueChange={(value) => setFormData({ ...formData, characteristic: value as PropertyCharacteristic })}
-            >
-              <SelectTrigger id="characteristic">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {PROPERTY_CHARACTERISTICS.map((char) => (
-                  <SelectItem key={char} value={char}>
-                    {char}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+
 
           <div className="space-y-2 pt-4 border-t">
             <Label htmlFor="athomeNumber">アットホーム番号</Label>

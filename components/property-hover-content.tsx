@@ -27,10 +27,7 @@ export function PropertyHoverContent({ property }: PropertyHoverContentProps) {
           <span className="text-muted-foreground text-xs">取引態様</span>
           <p>{property.status}</p>
         </div>
-        <div>
-          <span className="text-muted-foreground text-xs">社名</span>
-          <p>{property.companyName}</p>
-        </div>
+
         <div>
           <span className="text-muted-foreground text-xs">担当者名</span>
           <p>{property.handlerName}</p>
@@ -47,12 +44,7 @@ export function PropertyHoverContent({ property }: PropertyHoverContentProps) {
             <p>{property.transactionType}</p>
           </div>
         )}
-        {property.responsiblePerson && (
-          <div>
-            <span className="text-muted-foreground text-xs">責任者</span>
-            <p>{property.responsiblePerson}</p>
-          </div>
-        )}
+
         {property.characteristic && (
           <div>
             <span className="text-muted-foreground text-xs">売却理由</span>

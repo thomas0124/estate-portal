@@ -67,8 +67,8 @@ export interface Property {
   creditorPhone?: string // 債権者電話番号
 
   memo?: string // メモ
-  sellerEstimatedSales?: string // 売主の売上見込み
-  buyerEstimatedSales?: string // 買主の売上見込み
+  sellerSalesForecast?: string // 売主の売上見込み
+  buyerSalesForecast?: string // 買主の売上見込み
   contractDate?: Date // 契約日
   settlementDate?: Date // 決済日
 
@@ -92,6 +92,7 @@ export interface TaskDetail<TStatus = TaskStatus> {
   companyName?: string // 業者名
   contactPerson?: string // 担当者
   bank?: string // 金融機関名
+  bankContact?: string // 金-融機関担当者
   judicialScrivener?: string // 司法書士名
   notes?: string // メモ
 }
