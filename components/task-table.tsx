@@ -139,12 +139,10 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskDelete, isAdmin }: TaskTa
                           {task.companyName}
                         </div>
                         <div className="text-gray-700 text-xs">{task.handlerName}</div>
-                        {(task.sellerName || task.buyerName) && (
-                          <div className="text-gray-600 text-xs mt-1">
-                            {task.sellerName && <div>売: {task.sellerName}</div>}
-                            {task.buyerName && <div>買: {task.buyerName}</div>}
+                          <div className="text-gray-600 text-[10px] mt-1 space-y-0.5">
+                            <div>売主: {task.sellerName}</div>
+                            <div>買主: {task.buyerName}</div>
                           </div>
-                        )}
                       </div>
                       {isAdmin && (
                         <AlertDialog>
