@@ -32,7 +32,7 @@ const availableTransactionTypes: Record<string, TransactionType[]> = {
   仲介物件: ["元付(売)分かれ", "元付(売)他社", "客付(買)", "両直"],
   業者物件: ["元付(売)分かれ", "客付(買)", "両直"],
   所有物件: ["客付(買)"],
-  販売中止: ["元付(売)分かれ", "両直"],
+  販売中止: ["元付(売)分かれ", "元付(売)他社", "客付(買)", "両直"],
 }
 
 const getVendorSectionTitle = (transactionType: TransactionType | undefined) => {
